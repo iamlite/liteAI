@@ -5,7 +5,8 @@ interface DALL_E_Settings {
 }
 
 interface DALL_E_Response {
-    url: string;
+    b64_json: string;
+    b64_image: string;
 }
 
 export async function callDALL_E(
@@ -18,6 +19,7 @@ export async function callDALL_E(
         prompt,
         n,
         size,
+        response_format: 'b64_json',
     };
     try {
         const imageGenEndpointURL = window.electron.ipcRenderer.store.get('settings.imageGenEndpointURL');
@@ -34,9 +36,10 @@ export async function callDALL_E(
             const responseData = await response.json();
             console.log('Response Data:', responseData);
             const { data } = responseData;
-            data.forEach((imageData: DALL_E_Response) => {
-                onStreamResponse({ url: imageData.url });
-            });
+            data.forEach((imageData: DALL_E_Response) => onStreamResponse({
+                b64_image: imageData.b64_json,
+                b64_json: ""
+            }));
         } else {
             const errorData = await response.json();
             console.error('Error:', errorData);
