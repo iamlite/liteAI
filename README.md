@@ -32,10 +32,14 @@ Lite AI is built using cutting-edge technologies, making it a robust and enjoyab
 Follow these simple steps to get started with Lite AI:
 
 1. Clone the repository: `git clone https://github.com/your-username/lite-ai.git`
-2. Install dependencies: `npm install`
-3. Run the application: `npm start`
-
+2. Install dependencies:  `yarn` or `npm install`
+3. Run the application:  `yarn go` or `npm go`
 
 ## License
 
 Lite AI is open-source and licensed under the [MIT License](https://opensource.org/licenses/MIT).
+
+## Special Credits
+
+Framework:
+<https://github.com/codesbiome/electron-react-webpack-typescript-2023>
