@@ -2,79 +2,92 @@ import React from 'react';
 
 const ConsolePooper = () => {
 	const logStoreValues = () => {
-		// Retrieve all values from Electron store
 		const allStoreValues = window.electron.ipcRenderer.store.get(null);
-		const totalCount = Object.keys(allStoreValues).length;
 
-		// Get the current timestamp
-		const timestamp = new Date().toLocaleString();
+		// Define keys to be sorted and style information
+		const sortedKeys = [
+			'settings',
+			'stats',
+			'lightMode',
+			'darkMode',
+			'conversations',
+			'images',
+		];
+		const styleText = 'color: blue; font-weight: bold;';
+		const emoji = '🔍';
+		const emoji2 = '🔸';
+		const emoji3 = '🔹';
+		const emoji4 = '🔻';
+		const emoji5 = '🔽';
 
-		// Styling for console logs
-		const headerStyle = 'background: #3a2787; color: #fff; padding: 4px;';
-		const separatorStyle = 'color: #292929; font-weight: bold;';
-		const keyStyle = 'color: #fcb0c7; font-weight: bold;';
-		const valueStyle = 'color: #fff; font-family: monospace;';
+		// Remove userAvatar and assistantAvatar from settings before logging
+		if (allStoreValues && allStoreValues.settings) {
+			delete allStoreValues.settings.userAvatar;
+			delete allStoreValues.settings.assistantAvatar;
+		}
 
-		// Function to truncate URLs for cleaner display
-		const truncateURL = (url: string) => {
-			const maxLength = 40;
-			return url.length > maxLength ? url.slice(0, maxLength) + '...' : url;
+		// Helper function to log nested properties
+		const logNestedProperties = (obj: { [x: string]: never; }, indentation = '') => {
+			for (const key in obj) {
+				if (typeof obj[key] === 'object' && obj[key] !== null) {
+					console.groupCollapsed(
+						`${indentation}${key}`,
+						`${styleText} background-color: #f0f0f0; padding: 2px 6px; border-radius: 4px;`,
+					);
+					logNestedProperties(obj[key], `${indentation}\t`);
+					console.groupEnd();
+				} else {
+					console.log(`${emoji2} ${key}:`, obj[key]);
+				}
+			}
 		};
-
-		// Log a separator for clarity
-		console.log('%c------------------------------------', separatorStyle);
-		console.log('%cConsolePooper Log:', headerStyle);
-		console.log('%c------------------------------------', separatorStyle);
-
-		// Log the total count and timestamp
-		console.log(`%cTimestamp: ${timestamp}`, keyStyle);
-		console.log(`%cTotal Stored Values: ${totalCount}`, keyStyle);
-
-		// Log each value with improved formatting
-		Object.keys(allStoreValues).forEach((key) => {
-			const value = allStoreValues[key];
-			console.log('%c------------------------------------', separatorStyle);
-			console.log(`%cKey: ${key}`, keyStyle);
-
-			// Collapsible section for "conversations" key
-			if (key === 'conversations') {
-				console.groupCollapsed('%cValue:', keyStyle);
-			} else {
-				console.log('%cValue:', keyStyle);
-			}
-
-			// Truncate URLs in the value
-			const truncatedValue = JSON.stringify(
-				value,
-				(key, val) => {
-					if (typeof val === 'string') {
-						if (val.startsWith('http') && val.length > 40) {
-							return truncateURL(val);
-						} else if (val.startsWith('data:image')) {
-							return truncateURL(val);
-						}
-					}
-					return val;
-				},
-				2,
-			);
-
-			// Render truncated value and add a dropdown for truncated URLs
-			console.log(`%c${truncatedValue}`, valueStyle);
-			if (truncatedValue.includes('...')) {
-				console.groupCollapsed('%cClick to see full URL', valueStyle);
-				console.log(value);
+		sortedKeys.forEach((key) => {
+			if (key === 'settings') {
+				console.group(
+					`%c${emoji5} ${key}`,
+					`${styleText} background-color: #f9a825; color: #fff; padding: 4px 8px; border-radius: 8px;`,
+				);
+				logNestedProperties(allStoreValues[key], '\t');
 				console.groupEnd();
-			}
 
-			// Close the collapsible group if applicable
-			if (key === 'conversations') {
+			} else if (key === 'stats') {
+				console.log(
+					`%c${emoji3} ${key}`,
+					`${styleText} background-color: #f57c00; color: #fff; padding: 4px 8px; border-radius: 8px;`,
+				);
+				logNestedProperties(allStoreValues[key], '\t');
+				console.groupEnd();
+
+			} else if (key === 'lightMode' || key === 'darkMode') {
+				console.log(
+					`%c${emoji4} ${key}:`,
+					`${styleText} background-color: #4caf50; color: #fff; padding: 4px 8px; border-radius: 8px;`,
+					allStoreValues[key],
+				);
+			} else {
+				console.groupCollapsed(
+					`%c${emoji} ${key}`,
+					`${styleText} background-color: #3f51b5; color: #fff; padding: 4px 8px; border-radius: 8px;`,
+				);
+				console.log(allStoreValues[key]);
 				console.groupEnd();
 			}
 		});
 
-		// Log a closing separator
-		console.log('%c------------------------------------', separatorStyle);
+		for (const key in allStoreValues) {
+			if (
+				!sortedKeys.includes(key) &&
+				key !== 'userAvatar' &&
+				key !== 'assistantAvatar'
+			) {
+				console.groupCollapsed(
+					`%c${emoji} ${key}`,
+					`${styleText} background-color: #9e9e9e; color: #fff; padding: 4px 8px; border-radius: 8px;`,
+				);
+				console.log(allStoreValues[key]);
+				console.groupEnd();
+			}
+		}
 	};
 
 	return (

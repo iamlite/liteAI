@@ -9,6 +9,9 @@ interface DALL_E_Response {
     b64_image: string;
 }
 
+let imagesGenerated = 0;
+let stats = {};
+
 export default async function callDALL_E(
     settings: DALL_E_Settings,
     onStreamResponse: (response: DALL_E_Response) => void
@@ -36,10 +39,17 @@ export default async function callDALL_E(
             const responseData = await response.json();
             console.log('Response Data:', responseData);
             const { data } = responseData;
-            data.forEach((imageData: DALL_E_Response) => onStreamResponse({
-                b64_image: imageData.b64_json,
-                b64_json: ""
-            }));
+            data.forEach((imageData: DALL_E_Response) => {
+                imagesGenerated += 1;
+                stats = {...stats, imagesGenerated};
+
+                window.electron.ipcRenderer.store.set('stats', stats);
+
+                onStreamResponse({
+                    b64_image: imageData.b64_json,
+                    b64_json: ""
+                });
+            });
         } else {
             const errorData = await response.json();
             console.error('Error:', errorData);
