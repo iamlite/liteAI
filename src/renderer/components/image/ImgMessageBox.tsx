@@ -15,12 +15,17 @@ function ImgMessageBox({ imageUrls }: ImgMessageBoxProps) {
 				window.electron.ipcRenderer.store.get('images') || {};
 			if (!Object.values(storedImages).includes(url)) {
 				const id = Math.random().toString(36).substring(2);
-        const newImageData = { ...storedImages, [id]: url };
+				const newImageData = { ...storedImages, [id]: url };
 				window.electron.ipcRenderer.store.set('images', newImageData);
 				setRefreshKey((prevKey) => prevKey + 1);
 			}
 		});
 	}, [imageUrls]);
+
+	const deleteAllImages = () => {
+		window.electron.ipcRenderer.store.set('images', {});
+		setRefreshKey((prevKey) => prevKey + 1);
+	};
 
 	const deleteImage = (id: string) => {
 		const storedImages = window.electron.ipcRenderer.store.get('images') || {};
@@ -46,7 +51,7 @@ function ImgMessageBox({ imageUrls }: ImgMessageBoxProps) {
 				<div className='ml-auto'>
 					<ul className='menu menu-horizontal bg-transparent text-secondary rounded-box'>
 						<li>
-							<button type='button'>
+							<button type='button' onClick={deleteAllImages}>
 								<HiOutlineTrash className='w-5 h-5' />
 							</button>
 						</li>

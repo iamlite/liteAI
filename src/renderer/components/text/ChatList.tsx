@@ -6,6 +6,7 @@ import {
 import { motion } from 'framer-motion';
 import { useConversations } from '../context/ConversationContext';
 import React from 'react';
+import { useLocation } from 'react-router-dom';
 
 interface Conversation {
   id: number;
@@ -46,6 +47,18 @@ function ChatList() {
     setConversations([]);
     setCurrentConversation(null);
   };
+
+    // Use the useLocation hook to get the current location
+    const location = useLocation();
+
+    // Check if the pathname is '/text'
+    const isTextRoute = location.pathname === '/text';
+  
+    // If not on the '/text' route, don't render the ChatList component
+    if (!isTextRoute) {
+      return null;
+    }
+  
 
   return (
     <motion.div

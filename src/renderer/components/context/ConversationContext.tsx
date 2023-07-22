@@ -11,7 +11,7 @@ import React, {
 
 export interface Conversation {
   id: number;
-  messages: Array<{ role: string; content: string }>; // Update the structure of messages
+  messages: Array<{ role: string; content: string }>;
 }
 
 export interface Message {

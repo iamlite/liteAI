@@ -10,12 +10,13 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { useSettings } from './context/SettingsContext';
 import { useTheme, themeNames } from './context/ThemeContext';
 import Sidebar from './common/Sidebar';
-import MainContent from './main/MainContent';
+import MainContent from './text/TextMainContent';
 import ImgMainContent from './image/ImgMainContent';
 import Settings from './config/Settings';
-import ChatList from './main/ChatList';
+import ChatList from './text/ChatList';
 import Loading from './Load';
 import './Application.css';
+import HomePage from './main/home';
 
 function PageTransitionWrapper({ children }: { children: React.ReactNode }) {
 	const location = useLocation();
@@ -54,10 +55,11 @@ function App() {
 
 	return (
 		<Router>
-			<Titlebar />
+
 			<div
 				className='flex flex-col h-screen'
 				data-theme={`${themeNames[theme]}`}>
+				<Titlebar />
 				<div className='flex h-screen overflow-hidden bg-base-100'>
 					<Sidebar toggleChatList={toggleChatList} />
 					<AnimatePresence mode='wait'>
@@ -73,7 +75,8 @@ function App() {
 						)}
 					</AnimatePresence>
 					<PageTransitionWrapper>
-						<Route path='/' element={<MainContent />} />
+						<Route path='/' element={<HomePage />} />
+						<Route path='/text' element={<MainContent />} />
 						<Route path='/settings' element={<Settings />} />
 						<Route path='/img' element={<ImgMainContent />} />
 					</PageTransitionWrapper>

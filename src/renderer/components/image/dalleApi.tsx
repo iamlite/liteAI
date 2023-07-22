@@ -9,7 +9,7 @@ interface DALL_E_Response {
     b64_image: string;
 }
 
-export async function callDALL_E(
+export default async function callDALL_E(
     settings: DALL_E_Settings,
     onStreamResponse: (response: DALL_E_Response) => void
 ) {

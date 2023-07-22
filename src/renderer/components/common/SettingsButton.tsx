@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { HiCog } from 'react-icons/hi2';
+import { useLocation } from 'react-router-dom';
 import { motion, useMotionValue, useTransform } from 'framer-motion';
 
 interface SettingsButtonProps {
@@ -7,6 +8,7 @@ interface SettingsButtonProps {
 }
 
 function SettingsButton({ onClick }: SettingsButtonProps) {
+  const location = useLocation(); // active button stuff
   const [, setIsHovered] = useState(false);
   const scale = useMotionValue(1);
   const rotate = useTransform(scale, [1, 1.8], [0, 360]);
@@ -21,10 +23,12 @@ function SettingsButton({ onClick }: SettingsButtonProps) {
     scale.set(1);
   };
 
+  const isActive = location.pathname === '/settings'; // active button stuff
+
   return (
     <button
       type="button"
-      className="flex items-center"
+      className={`flex items-center ${isActive ? 'border-2 rounded-xl' : ''}`} // active button stuff
       onClick={onClick}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}

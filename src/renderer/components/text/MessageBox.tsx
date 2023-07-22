@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useEffect } from 'react';
 import { HiOutlineTrash, HiInboxArrowDown } from 'react-icons/hi2';
 import { useConversations } from '../context/ConversationContext';
 import ChatBubble from './ChatBubble';
@@ -18,6 +18,8 @@ function MessageBox() {
 		currentConversation?.messages.filter(
 			(message) => message.content.trim() !== '',
 		) || [];
+
+	useEffect(scrollToBottom, [messages]);
 
 	scrollToBottom();
 
