@@ -77,7 +77,7 @@ module.exports = {
 				},
 			},
 			{
-				darklite: {
+				'DefaultDark': {
 					'color-scheme': 'dark',
 					primary: '#3a2787',
 					secondary: '#687cd6',
@@ -94,7 +94,7 @@ module.exports = {
 				},
 			},
 			{
-				litelight: {
+				'DefaultLight': {
 					primary: '#afb1ed',
 					secondary: '#687cd6',
 					accent: '#f8ffa3',

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { animated, useSpring } from '@react-spring/web';
+import { motion, useAnimation } from 'framer-motion';
 import {
 	AiFillCloseCircle,
 	AiFillExclamationCircle,
@@ -30,15 +30,7 @@ const typeIcons: Record<string, React.JSX.Element> = {
 
 function Toast({ message, type = 'default', onDismiss, index }: ToastProps) {
 	const [isOpen, setIsOpen] = useState(true);
-
-	const toastStyles = useSpring({
-		from: { opacity: 0, transform: 'translateY(-100%)' },
-		to: {
-			opacity: isOpen ? 1 : 0,
-			transform: isOpen ? 'translateY(0%)' : 'translateY(100%)',
-		},
-		onRest: () => !isOpen && onDismiss(),
-	});
+	const controls = useAnimation();
 
 	const top = `${index * 4 + 4}rem`;
 
@@ -50,10 +42,29 @@ function Toast({ message, type = 'default', onDismiss, index }: ToastProps) {
 		return () => clearTimeout(timer);
 	}, []);
 
+	useEffect(() => {
+		if (isOpen) {
+			controls.start({
+				opacity: 1,
+				y: 0,
+			});
+		} else {
+			controls
+				.start({
+					opacity: 0,
+					y: '100%',
+				})
+				.then(onDismiss);
+		}
+	}, [isOpen, controls, onDismiss]);
+
 	return (
 		<div className='toast toast-top toast-end opacity-75'>
-			<animated.div
-				style={{ ...toastStyles, top }}
+			<motion.div
+				initial={{ opacity: 0, y: '-100%' }}
+				animate={controls}
+				exit={{ opacity: 0, y: '100%' }}
+				style={{ top }}
 				className={`alert ${typeStyles[type] || typeStyles.default}`}
 				role='alert'>
 				{typeIcons[type]}
@@ -65,7 +76,7 @@ function Toast({ message, type = 'default', onDismiss, index }: ToastProps) {
 					aria-label='Close'>
 					<AiFillCloseCircle className='w-5 h-5' />
 				</button>
-			</animated.div>
+			</motion.div>
 		</div>
 	);
 }

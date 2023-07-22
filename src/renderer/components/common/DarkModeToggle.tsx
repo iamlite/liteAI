@@ -1,6 +1,6 @@
 import React, { useContext, useState } from 'react';
 import { HiMiniMoon, HiSun } from 'react-icons/hi2';
-import { useSpring, animated } from '@react-spring/web';
+import { motion } from 'framer-motion'; // Import motion from Framer Motion
 import { ToastContext } from '../context/ToastContext';
 import { useTheme } from '../context/ThemeContext';
 
@@ -19,17 +19,27 @@ function DarkModeToggle() {
     addToast(message, 'success');
   };
 
-  const moonSpringProps = useSpring({
-    transform: isHovered ? 'scale(1.6) rotate(80deg)' : 'scale(1) rotate(0deg)',
-    config: { tension: 50, friction: 45 },
-  });
+  const moonVariants = {
+    hovered: {
+      scale: 1.6,
+      rotate: 80,
+    },
+    unhovered: {
+      scale: 1,
+      rotate: 0,
+    },
+  };
 
-  const sunSpringProps = useSpring({
-    transform: isHovered
-      ? 'scale(1.8) rotate(360deg)'
-      : 'scale(1) rotate(0deg)',
-    config: { tension: 50, friction: 75 },
-  });
+  const sunVariants = {
+    hovered: {
+      scale: 1.8,
+      rotate: 360,
+    },
+    unhovered: {
+      scale: 1,
+      rotate: 0,
+    },
+  };
 
   return (
     <button
@@ -40,13 +50,23 @@ function DarkModeToggle() {
       onMouseLeave={() => setIsHovered(false)}
     >
       {isDarkMode ? (
-        <animated.span style={moonSpringProps}>
+        <motion.span
+          initial={false}
+          animate={isHovered ? 'hovered' : 'unhovered'}
+          variants={moonVariants}
+          transition={{ duration: 0.2 }} // Adjust duration as needed
+        >
           <HiMiniMoon id="darkModeIcon" className="w-6 h-6" />
-        </animated.span>
+        </motion.span>
       ) : (
-        <animated.span style={sunSpringProps}>
+        <motion.span
+          initial={false}
+          animate={isHovered ? 'hovered' : 'unhovered'}
+          variants={sunVariants}
+          transition={{ duration: 0.2 }} // Adjust duration as needed
+        >
           <HiSun id="lightModeIcon" className="w-7 h-7" />
-        </animated.span>
+        </motion.span>
       )}
     </button>
   );

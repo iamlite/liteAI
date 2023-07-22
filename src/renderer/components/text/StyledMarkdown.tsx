@@ -1,4 +1,4 @@
-import React, { ComponentProps } from 'react';
+import React, { ComponentProps, ComponentPropsWithRef, ReactNode } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 
@@ -22,9 +22,10 @@ type MarkdownElement =
   | 'hr'
   | 'table';
 
-type StyledMarkdownProps = ComponentProps<typeof ReactMarkdown> & {
-  children: string;
-};
+
+  type StyledMarkdownProps = ComponentProps<typeof ReactMarkdown> & {
+    children: string | ReactNode;
+  };
 
 const markdownElementStyles: Partial<Record<MarkdownElement, string>> = {
   h1: 'text-4xl font-bold',
@@ -46,8 +47,20 @@ const markdownElementStyles: Partial<Record<MarkdownElement, string>> = {
   hr: 'border-t-2 border-primary my-4',
   table: 'table table-zebra bg-base-100 text-base-content',
 };
-
 const proseStyles = '';
+
+function filterProps(componentProps: ComponentPropsWithRef<React.ElementType>) {
+  const standardProps = ['children', 'className', 'style', 'onClick', 'onMouseEnter', 'onMouseLeave'];
+  
+  return Object.keys(componentProps)
+    .filter(key => standardProps.includes(key))
+    .reduce((obj, key) => {
+      return {
+        ...obj,
+        [key]: componentProps[key as keyof typeof componentProps],
+      };
+    }, {});
+}
 
 function StyledMarkdown({
   children,
@@ -62,16 +75,19 @@ function StyledMarkdown({
   const components = Object.fromEntries(
     Object.entries(markdownElementStyles).map(([tag, classes]) => [
       tag,
-      ({ ...componentProps }: any) =>
-        React.createElement(tag, {
+      (componentProps: ComponentPropsWithRef<React.ElementType>) => {
+        const filteredProps = filterProps(componentProps);
+
+        return React.createElement(tag, {
           className: `${proseStyles} ${classes}`,
-          ...componentProps,
-        }),
+          ...filteredProps,
+        });
+      },
     ])
   );
 
   const plugins = [...remarkPlugins, remarkGfm];
-
+  
   return (
     <ReactMarkdown
       className={className}

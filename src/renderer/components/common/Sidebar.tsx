@@ -23,14 +23,16 @@ function Sidebar({ toggleChatList }: SidebarProps) {
 	const handleTextClick = () => {
 		navigate('/text');
 	};
+	
+	const handleimgClick = () => {
+		navigate('/img');
+	};
 
 	const handleSettingsClick = () => {
 		navigate('/settings');
 	};
 
-	const handleimgClick = () => {
-		navigate('/img');
-	};
+
 
 	return (
 		<div className='flex flex-row pl-5 pb-7 pt-10 flex-grow'>

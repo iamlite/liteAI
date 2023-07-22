@@ -41,12 +41,12 @@ export type ThemeName =
   | 'coffee'
   | 'winter'
   | 'vibe'
-  | 'darklite'
-  | 'litelight';
+  | 'DefaultDark'
+  | 'DefaultLight';
 
 export const themeNames: Record<Theme, ThemeName[]> = {
   light: [
-    'litelight',
+    'DefaultLight',
     'light',
     'cupcake',
     'bumblebee',
@@ -69,7 +69,7 @@ export const themeNames: Record<Theme, ThemeName[]> = {
     'vibe',
   ],
   dark: [
-    'darklite',
+    'DefaultDark',
     'dark',
     'dracula',
     'synthwave',
@@ -95,8 +95,8 @@ export type ThemeContextType = {
 };
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
-export const defaultLightTheme: ThemeName = 'litelight';
-export const defaultDarkTheme: ThemeName = 'darklite';
+export const defaultLightTheme: ThemeName = 'DefaultLight';
+export const defaultDarkTheme: ThemeName = 'DefaultDark';
 
 export function useTheme(): ThemeContextType {
   const context = useContext(ThemeContext);
