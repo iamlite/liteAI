@@ -42,4 +42,4 @@ Lite AI is open-source and licensed under the [MIT License](https://opensource.o
 ## Special Credits
 
 Framework:
-<https://github.com/codesbiome/electron-react-webpack-typescript-2023>
+[Electron-React-Typescript-Webpack-2023](https://github.com/codesbiome/electron-react-webpack-typescript-2023)
