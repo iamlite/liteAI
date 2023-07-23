@@ -1,8 +1,9 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { AiOutlineHeart, AiFillApi, AiOutlineArrowRight } from 'react-icons/ai';
+import { AiOutlineHeart, AiFillApi, AiOutlineArrowRight, AiFillWechat, AiOutlinePicture } from 'react-icons/ai';
 import { HiFire } from 'react-icons/hi';
+import { useTiktoken } from '@components/context/TiktokenContext';
 
 const HomePage = () => {
 	const navigate = useNavigate();
@@ -14,6 +15,8 @@ const HomePage = () => {
 	const handleimgClick = () => {
 		navigate('/img');
 	};
+
+	const { getTotalTokenUsage } = useTiktoken();
 
 	return (
 		<motion.div
@@ -33,7 +36,9 @@ const HomePage = () => {
 								<AiOutlineHeart className='text-3xl' />
 							</div>
 							<div className='stat-title'>Total Tokens Used</div>
-							<div className='stat-value text-primary'>25.6K</div>
+							<div className='stat-value text-primary'>
+								{getTotalTokenUsage()}
+							</div>
 							<div className='stat-desc'>something interesting goes here</div>
 						</motion.div>
 						<motion.div
@@ -85,7 +90,7 @@ const HomePage = () => {
 				</div>
 
 				<motion.div
-					className='px-4 py-16 mx-auto sm:max-w-xl md:max-w-full lg:max-w-screen-xl md:px-24 lg:px-8 lg:py-20'
+					className='px-4 py-8 mx-auto sm:max-w-xl md:max-w-full lg:max-w-screen-xl'
 					initial={{ opacity: 0 }}
 					animate={{ opacity: 1 }}
 					exit={{ opacity: 0 }}
@@ -118,7 +123,7 @@ const HomePage = () => {
 							Your personal assistant, just the way you want it.
 						</motion.p>
 						<motion.hr
-							className='w-full my-8'
+							className='w-full my-4'
 							initial={{ scaleX: 0 }}
 							animate={{ scaleX: 1 }}
 							exit={{ scaleX: 0 }}
@@ -126,20 +131,37 @@ const HomePage = () => {
 						/>
 					</motion.div>
 				</motion.div>
+				{/* <motion.div className='flex flex-row mx-auto'>
+					<div className='mockup-code bg-accent w-full'>
+						<pre data-prefix='$'>
+							<code>Recent Updates:</code>
+						</pre>
+						<pre data-prefix='>' className='text-warning'>
+							<code>DALL-E 2 Image Generation Support!</code>
+						</pre>
+						<pre data-prefix='>' className='text-success'>
+							<code>TikToken Support!</code>
+						</pre>
+					</div>
+				</motion.div> */}
 
 				<motion.div
 					className='flex flex-row px-4 py-16 mx-auto sm:max-w-xl md:max-w-full lg:max-w-screen-xl md:px-24 lg:px-8 lg:py-20'
-					initial={{ opacity: 0, translateY: -100 }}
-					animate={{ opacity: 1, translateY: 'auto' }}
-					exit={{ opacity: 0, translateY: 100 }}
-					transition={{ duration: 0.5, delay: 0.8 }}>
+					initial={{ opacity: 0 }}
+					animate={{ opacity: 1 }}
+					exit={{ opacity: 0 }}
+					transition={{ duration: 0.5, delay: 0.9 }}>
 					<motion.button
 						type='button'
-						className='card text-left w-96 bg-base-100 shadow-xl px-2 mx-2 rounded-2xl relative'
+						className='card text-left w-96 bg-base-100 shadow-xl px-2 mx-2 rounded-2xl relative overflow-hidden'
 						onClick={handleTextClick}
 						whileHover={{ scale: 1.1 }}
 						whileTap={{ scale: 0.95 }}>
-						<motion.div className='card-body'>
+						<AiFillWechat
+							className='absolute top-0 bottom-0 left-0 right-0 w-[150%] h-[120%] z-10 opacity-10'
+							style={{ color: 'yourColor' }}
+						/>
+						<motion.div className='card-body z-20 relative'>
 							<motion.h2 className='card-title text-primary'>
 								Start a Chat
 							</motion.h2>
@@ -148,17 +170,22 @@ const HomePage = () => {
 								started. Or just say Hello!
 							</motion.p>
 						</motion.div>
-						<motion.div className='absolute bottom-3 right-3 w-6 h-6 text-secondary'>
+						<motion.div className='absolute bottom-3 right-3 w-6 h-6 text-secondary z-20'>
 							<AiOutlineArrowRight />
 						</motion.div>
 					</motion.button>
+
 					<motion.button
 						type='button'
-						className='card text-left w-96 bg-base-100 shadow-xl px-2 mx-2 rounded-2xl relative'
+						className='card text-left w-96 bg-base-100 shadow-xl px-2 mx-2 rounded-2xl relative overflow-hidden'
 						onClick={handleimgClick}
 						whileHover={{ scale: 1.1 }}
 						whileTap={{ scale: 0.95 }}>
-						<motion.div className='card-body'>
+						<AiOutlinePicture
+							className='absolute top-0 bottom-0 left-0 right-0 w-[150%] h-[130%] z-10 opacity-10'
+							style={{ color: 'yourColor' }}
+						/>
+						<motion.div className='card-body z-20 relative'>
 							<motion.h2 className='card-title text-secondary'>
 								Generate an Image
 							</motion.h2>
@@ -167,7 +194,7 @@ const HomePage = () => {
 								is the only limit.
 							</motion.p>
 						</motion.div>
-						<motion.div className='absolute bottom-3 right-3 w-6 h-6 text-secondary'>
+						<motion.div className='absolute bottom-3 right-3 w-6 h-6 text-secondary z-20'>
 							<AiOutlineArrowRight />
 						</motion.div>
 					</motion.button>

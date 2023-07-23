@@ -9,6 +9,7 @@ type ChatBubbleProps = {
 	message: string;
 	role: string;
 	tokenCount: number;
+	id: string;
 };
 
 function ChatBubble({ message, role, tokenCount }: ChatBubbleProps) {
@@ -30,7 +31,7 @@ function ChatBubble({ message, role, tokenCount }: ChatBubbleProps) {
 		setCopiedBubble(true);
 	};
 
-	const renderCodeBlock = (code: string, language: string) => {
+	const renderCodeBlock = (code: string, language: string, index: number) => {
 		const customStyle: CSSProperties = {
 			borderRadius: '0.75em',
 			overflowX: 'auto',
@@ -38,7 +39,7 @@ function ChatBubble({ message, role, tokenCount }: ChatBubbleProps) {
 		};
 
 		return (
-			<div className='relative'>
+			<div className='relative' key={index}>
 				<SyntaxHighlighter
 					language={language}
 					style={vscDarkPlus}
@@ -97,7 +98,7 @@ function ChatBubble({ message, role, tokenCount }: ChatBubbleProps) {
 							if (isCodeBlock) {
 								const language = block.split('\n')[0].trim();
 								const code = block.slice(language.length + 1);
-								return renderCodeBlock(code, language);
+								return renderCodeBlock(code, language, index);
 							} else {
 								return <StyledMarkdown key={index}>{block}</StyledMarkdown>;
 							}
@@ -109,7 +110,7 @@ function ChatBubble({ message, role, tokenCount }: ChatBubbleProps) {
 						className={`text-xs text-base-content opacity-50 absolute ${
 							role === 'user' ? 'left-2' : 'right-2'
 						} -bottom-5 truncate`}>
-						{tokenCount === 0 ? ( 
+						{tokenCount === 0 ? (
 							<div style={{ position: 'relative', top: '5px' }}>
 								<span className='loading loading-ring loading-sm'></span>
 							</div>

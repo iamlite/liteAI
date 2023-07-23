@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useMemo } from 'react';
 import { HiOutlineTrash, HiInboxArrowDown } from 'react-icons/hi2';
 import { useConversations } from '../context/ConversationContext';
 import ChatBubble from './ChatBubble';
@@ -19,9 +19,25 @@ function MessageBox() {
 			(message) => message.content.trim() !== '',
 		) || [];
 
+	const totalTokens = useMemo(() => {
+		return messages.reduce((sum, message) => sum + message.tokenCount, 0);
+	}, [messages]);
+
 	useEffect(scrollToBottom, [messages]);
 
 	scrollToBottom();
+
+	const downloadConversation = () => {
+		if (!currentConversation) return;
+		const data = JSON.stringify(currentConversation, null, 2); // null and 2 are for formatting purposes
+		const blob = new Blob([data], { type: 'application/json' });
+		const url = URL.createObjectURL(blob);
+		const link = document.createElement('a');
+		link.download = `conversation_${currentConversation.id}.json`;
+		link.href = url;
+		link.click();
+		URL.revokeObjectURL(url);
+	};
 
 	return (
 		<div className='flex flex-col h-full mb-5 overflow-hidden'>
@@ -33,7 +49,7 @@ function MessageBox() {
 				</div>
 				<div className='flex flex-col ml-3 text-neutral-content'>
 					<div className='font-semibold text-sm'>
-						Total Tokens: {/* {totalTokens} */}
+						Total Tokens: {totalTokens}
 					</div>
 					<div className='text-xs'>
 						Chat ID:{' '}
@@ -48,7 +64,7 @@ function MessageBox() {
 							</button>
 						</li>
 						<li>
-							<button type='button'>
+							<button type='button' onClick={downloadConversation}>
 								<HiInboxArrowDown className='w-5 h-5' />
 							</button>
 						</li>
@@ -63,7 +79,8 @@ function MessageBox() {
 						role={message.role as 'user' | 'assistant'}
 						message={message.content.trim()}
 						tokenCount={message.tokenCount}
-						/>
+						id={message.id}
+					/>
 				))}
 				<div ref={messagesEndRef} />
 			</div>

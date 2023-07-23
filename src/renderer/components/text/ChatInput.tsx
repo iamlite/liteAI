@@ -33,37 +33,36 @@ function ChatInput() {
     }
   };
   const { addToast } = useContext(ToastContext);
+  const { getTokenCount, incrementTotalTokenUsage } = useTiktoken();
 
-// Call the hook at the top level
-const { getTokenCount } = useTiktoken();
+  const handleSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
 
-const handleSubmit = async (event: React.FormEvent) => {
-  event.preventDefault();
+    if (message.trim() !== '') {
+      const newConversations = [...conversations];
+      let currentMessages: Message[];
 
-  if (message.trim() !== '') {
-    const newConversations = [...conversations];
-    let currentMessages: Message[];
+      if (!currentConversation) {
+        const newConversation: Conversation = { id: Date.now(), messages: [] };
+        newConversations.unshift(newConversation);
+        setCurrentConversation(newConversation);
+        currentMessages = newConversation.messages;
+      } else {
+        currentMessages = currentConversation.messages;
+      }
 
-    if (!currentConversation) {
-      const newConversation: Conversation = { id: Date.now(), messages: [] };
-      newConversations.unshift(newConversation);
-      setCurrentConversation(newConversation);
-      currentMessages = newConversation.messages;
-    } else {
-      currentMessages = currentConversation.messages;
+
+      const tokenCount = getTokenCount(message);
+      currentMessages.push({ id: uuidv4(), role: 'user', content: message, tokenCount });
+      incrementTotalTokenUsage(tokenCount);
+      setConversations(newConversations);
+      setMessage('');
+      setIsGenerating(true);
+
+      scrollToBottom();
     }
+  };
 
-    // Use getTokenCount here
-    const tokenCount = getTokenCount(message);
-    currentMessages.push({ id: uuidv4(), role: 'user', content: message, tokenCount });
-    // console.log(`User message: ${message}`);
-    setConversations(newConversations);
-    setMessage('');
-    setIsGenerating(true);
-
-    scrollToBottom();
-  }
-};
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (event.key === 'Enter' && !event.shiftKey) {
@@ -82,12 +81,17 @@ const handleSubmit = async (event: React.FormEvent) => {
     const callApi = async () => {
       const { messages } = currentConversation;
       let assistantContent = '';
+      let assistantTokensAdded = false;
       if (messages.length > 0 && messages[messages.length - 1].role === 'user') {
         await callOpenAI(messages, settingsRef.current, (response) => {
           if (response.content === '[DONE]') {
             const tokenCount = getTokenCount(assistantContent);
             if (messages[messages.length - 1].role === 'assistant') {
               messages[messages.length - 1].tokenCount = tokenCount;
+              if (!assistantTokensAdded) {
+                incrementTotalTokenUsage(tokenCount);
+                assistantTokensAdded = true;
+              }
             }
             setIsGenerating(false);
           } else {
@@ -97,7 +101,6 @@ const handleSubmit = async (event: React.FormEvent) => {
             } else {
               messages.push({ id: uuidv4(), role: 'assistant', content: response.content, tokenCount: 0 });
             }
-            
           }
           setConversations((prevConversations: Conversation[]) => {
             const newConversations = [...prevConversations];
@@ -116,7 +119,7 @@ const handleSubmit = async (event: React.FormEvent) => {
     if (isGenerating) {
       callApi();
     }
-  }, [currentConversation, setConversations, isGenerating, getTokenCount]);
+  }, [currentConversation, setConversations, isGenerating, getTokenCount, incrementTotalTokenUsage]);
   
 
   useEffect(() => {

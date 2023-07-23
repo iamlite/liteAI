@@ -4,17 +4,20 @@ import { getEncoding } from 'js-tiktoken';
 interface TiktokenContextType {
   getTokenCount: (text: string) => number;
   getTotalTokens: (messages: string[]) => number;
+  incrementTotalTokenUsage: (tokenCount: number) => void;
+  getTotalTokenUsage: () => number;
 }
 
 export const TiktokenContext = createContext<TiktokenContextType>({
   getTokenCount: () => 0,
   getTotalTokens: () => 0,
+  incrementTotalTokenUsage: () => {},
+  getTotalTokenUsage: () => 0,
 });
 
 interface TiktokenProviderProps {
   children: React.ReactNode;
 }
-
 
 export function TiktokenProvider({
   children,
@@ -39,9 +42,18 @@ export function TiktokenProvider({
     [getTokenCount]
   );
 
+  const incrementTotalTokenUsage = useCallback((tokenCount: number) => {
+    const currentTotalUsage = window.electron.ipcRenderer.store.get('stats.totalTokenUsage') || 0;
+    window.electron.ipcRenderer.store.set('stats.totalTokenUsage', currentTotalUsage + tokenCount);
+  }, []);
+
+  const getTotalTokenUsage = useCallback(() => {
+    return window.electron.ipcRenderer.store.get('stats.totalTokenUsage') || 0;
+  }, []);
+
   const contextValue = useMemo(
-    () => ({ getTokenCount, getTotalTokens }),
-    [getTokenCount, getTotalTokens]
+    () => ({ getTokenCount, getTotalTokens, incrementTotalTokenUsage, getTotalTokenUsage }),
+    [getTokenCount, getTotalTokens, incrementTotalTokenUsage, getTotalTokenUsage]
   );
 
   return (
