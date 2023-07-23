@@ -1,134 +1,134 @@
 import React, {
-  createContext,
-  useState,
-  useEffect,
-  useContext,
-  ReactNode,
-  useMemo,
-  useCallback,
-  Key,
+	createContext,
+	useState,
+	useEffect,
+	useContext,
+	ReactNode,
+	useMemo,
+	useCallback,
 } from 'react';
 
 export interface Conversation {
-  id: number;
-  messages: Array<{ role: string; content: string }>;
+	id: number;
+	messages: Message[];
 }
 
 export interface Message {
-  id?: Key;
-  role: string;
-  content: string;
+	id: string;
+	role: string;
+	content: string;
+	tokenCount: number;
 }
 
 export interface ConversationContextProps {
-  conversations: Conversation[];
-  setConversations: React.Dispatch<React.SetStateAction<Conversation[]>>;
-  currentConversation: Conversation | undefined;
-  setCurrentConversation: React.Dispatch<
-    React.SetStateAction<Conversation | undefined>
-  >;
-  clearCurrentConversation: () => void;
+	conversations: Conversation[];
+	setConversations: React.Dispatch<React.SetStateAction<Conversation[]>>;
+	currentConversation: Conversation | undefined;
+	setCurrentConversation: React.Dispatch<
+		React.SetStateAction<Conversation | undefined>
+	>;
+	clearCurrentConversation: () => void;
 }
 
 export const ConversationContext = createContext<
-  ConversationContextProps | undefined
+	ConversationContextProps | undefined
 >(undefined);
 
 interface ConversationProviderProps {
-  children: ReactNode;
+	children: ReactNode;
 }
 
 export function ConversationProvider({ children }: ConversationProviderProps) {
-  const [currentConversation, setCurrentConversation] = useState<
-    Conversation | undefined
-  >();
-  const [conversations, setConversations] = useState<Conversation[]>([
-    { id: Date.now(), messages: [] },
-  ]);
+	const [currentConversation, setCurrentConversation] = useState<
+		Conversation | undefined
+	>();
+	const [conversations, setConversations] = useState<Conversation[]>([
+		{ id: Date.now(), messages: [] },
+	]);
 
-  const getInitialConversationsFromLocalStorage = () => {
-    const storedConversations = localStorage.getItem('conversations');
-    const initialConversations = storedConversations
-      ? JSON.parse(storedConversations)
-      : [{ id: Date.now(), messages: [] }];
+	const getInitialConversationsFromLocalStorage = () => {
+		const storedConversations = localStorage.getItem('conversations');
+		const initialConversations = storedConversations
+			? JSON.parse(storedConversations)
+			: [{ id: Date.now(), messages: [] }];
 
-    return initialConversations;
-  };
+		return initialConversations;
+	};
 
-  useEffect(() => {
-    const storedConversations =
-      window.electron.ipcRenderer.store.get('conversations');
-    const initialConversations = storedConversations
-      ? JSON.parse(storedConversations)
-      : getInitialConversationsFromLocalStorage();
+	useEffect(() => {
+		const storedConversations =
+			window.electron.ipcRenderer.store.get('conversations');
+		const initialConversations = storedConversations
+			? JSON.parse(storedConversations)
+			: getInitialConversationsFromLocalStorage();
 
-    setConversations(initialConversations);
+		setConversations(initialConversations);
 
-    if (initialConversations.length > 0) {
-      setCurrentConversation(initialConversations[0]);
-    }
-  }, []);
+		if (initialConversations.length > 0) {
+			setCurrentConversation(initialConversations[0]);
+		}
+	}, []);
 
-  useEffect(() => {
-    window.electron.ipcRenderer.store.set(
-      'conversations',
-      JSON.stringify(conversations)
-    );
-    localStorage.setItem('conversations', JSON.stringify(conversations));
+	useEffect(() => {
+		window.electron.ipcRenderer.store.set(
+			'conversations',
+			JSON.stringify(conversations),
+		);
+		localStorage.setItem('conversations', JSON.stringify(conversations));
 
-    if (
-      currentConversation &&
-      !conversations.find((c) => c.id === currentConversation.id)
-    ) {
-      setCurrentConversation(conversations[0]);
-    }
-  }, [conversations, currentConversation]);
+		if (
+			currentConversation &&
+			!conversations.find((c) => c.id === currentConversation.id)
+		) {
+			setCurrentConversation(conversations[0]);
+		}
+	}, [conversations, currentConversation]);
 
-  const clearCurrentConversation = useCallback(() => {
-    if (!currentConversation) return;
+	const clearCurrentConversation = useCallback(() => {
+		if (!currentConversation) return;
 
-    const { id: currentConversationId } = currentConversation;
+		const { id: currentConversationId } = currentConversation;
 
-    const newConversations = conversations.filter(
-      ({ id }) => id !== currentConversationId
-    );
+		const newConversations = conversations.filter(
+			({ id }) => id !== currentConversationId,
+		);
 
-    let newCurrentConversation: Conversation;
-    if (newConversations.length > 0) {
-      [newCurrentConversation] = newConversations;
-    } else {
-      newCurrentConversation = { id: Date.now(), messages: [] };
-      newConversations.push(newCurrentConversation);
-    }
+		let newCurrentConversation: Conversation;
+		if (newConversations.length > 0) {
+			[newCurrentConversation] = newConversations;
+		} else {
+			newCurrentConversation = { id: Date.now(), messages: [] };
+			newConversations.push(newCurrentConversation);
+		}
 
-    setConversations(newConversations);
-    setCurrentConversation(newCurrentConversation);
-  }, [currentConversation, conversations]);
+		setConversations(newConversations);
+		setCurrentConversation(newCurrentConversation);
+	}, [currentConversation, conversations]);
 
-  const value = useMemo(
-    () => ({
-      conversations,
-      setConversations,
-      currentConversation,
-      setCurrentConversation,
-      clearCurrentConversation,
-    }),
-    [conversations, currentConversation, clearCurrentConversation]
-  );
+	const value = useMemo(
+		() => ({
+			conversations,
+			setConversations,
+			currentConversation,
+			setCurrentConversation,
+			clearCurrentConversation,
+		}),
+		[conversations, currentConversation, clearCurrentConversation],
+	);
 
-  return (
-    <ConversationContext.Provider value={value}>
-      {children}
-    </ConversationContext.Provider>
-  );
+	return (
+		<ConversationContext.Provider value={value}>
+			{children}
+		</ConversationContext.Provider>
+	);
 }
 
 export function useConversations(): ConversationContextProps {
-  const context = useContext(ConversationContext);
-  if (context === undefined) {
-    throw new Error(
-      'useConversations must be used within a ConversationProvider'
-    );
-  }
-  return context;
+	const context = useContext(ConversationContext);
+	if (context === undefined) {
+		throw new Error(
+			'useConversations must be used within a ConversationProvider',
+		);
+	}
+	return context;
 }

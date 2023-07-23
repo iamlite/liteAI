@@ -4,7 +4,6 @@ import Store from 'electron-store';
 
 const store = new Store();
 
-
 if (require('electron-squirrel-startup')) {
   app.quit();
 }
@@ -30,4 +29,6 @@ ipcMain.on('electron-store-get', async (event, val) => {
 ipcMain.on('electron-store-set', async (event, key, val) => {
   store.set(key, val);
 });
-
+ipcMain.on('electron-store-delete', (event, key) => {
+  store.delete(key);
+});

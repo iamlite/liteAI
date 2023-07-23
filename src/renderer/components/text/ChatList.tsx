@@ -4,13 +4,13 @@ import {
   HiOutlineTrash,
 } from 'react-icons/hi2';
 import { motion } from 'framer-motion';
-import { useConversations } from '../context/ConversationContext';
+import { useConversations, Message } from '../context/ConversationContext';
 import React from 'react';
 import { useLocation } from 'react-router-dom';
 
 interface Conversation {
-  id: number;
-  messages: Array<{ role: string; content: string }>;
+	id: number;
+	messages: Message[];
 }
 
 function ChatList() {

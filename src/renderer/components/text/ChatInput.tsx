@@ -6,8 +6,10 @@ import {
 } from 'react-icons/ai';
 import { callOpenAI, stopOpenAI } from './openaiApi';
 import { useSettings } from '../context/SettingsContext';
-import { useConversations, Conversation } from '../context/ConversationContext';
+import { useConversations, Conversation, Message } from '../context/ConversationContext';
 import { ToastContext } from '../context/ToastContext';
+import { v4 as uuidv4 } from 'uuid';
+import { useTiktoken } from '@components/context/TiktokenContext';
 
 function ChatInput() {
   const { settings } = useSettings();
@@ -32,29 +34,36 @@ function ChatInput() {
   };
   const { addToast } = useContext(ToastContext);
 
-  const handleSubmit = async (event: React.FormEvent) => {
-    event.preventDefault();
+// Call the hook at the top level
+const { getTokenCount } = useTiktoken();
 
-    if (message.trim() !== '') {
-      const newConversations = [...conversations];
-      let currentMessages: { role: string; content: string }[];
+const handleSubmit = async (event: React.FormEvent) => {
+  event.preventDefault();
 
-      if (!currentConversation) {
-        const newConversation: Conversation = { id: Date.now(), messages: [] };
-        newConversations.unshift(newConversation);
-        setCurrentConversation(newConversation);
-        currentMessages = newConversation.messages;
-      } else {
-        currentMessages = currentConversation.messages;
-      }
-      currentMessages.push({ role: 'user', content: message });
-      setConversations(newConversations);
-      setMessage('');
-      setIsGenerating(true);
+  if (message.trim() !== '') {
+    const newConversations = [...conversations];
+    let currentMessages: Message[];
 
-      scrollToBottom();
+    if (!currentConversation) {
+      const newConversation: Conversation = { id: Date.now(), messages: [] };
+      newConversations.unshift(newConversation);
+      setCurrentConversation(newConversation);
+      currentMessages = newConversation.messages;
+    } else {
+      currentMessages = currentConversation.messages;
     }
-  };
+
+    // Use getTokenCount here
+    const tokenCount = getTokenCount(message);
+    currentMessages.push({ id: uuidv4(), role: 'user', content: message, tokenCount });
+    // console.log(`User message: ${message}`);
+    setConversations(newConversations);
+    setMessage('');
+    setIsGenerating(true);
+
+    scrollToBottom();
+  }
+};
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (event.key === 'Enter' && !event.shiftKey) {
@@ -72,38 +81,43 @@ function ChatInput() {
   useEffect(() => {
     const callApi = async () => {
       const { messages } = currentConversation;
-      if (
-        messages.length > 0 &&
-        messages[messages.length - 1].role === 'user'
-      ) {
+      let assistantContent = '';
+      if (messages.length > 0 && messages[messages.length - 1].role === 'user') {
         await callOpenAI(messages, settingsRef.current, (response) => {
           if (response.content === '[DONE]') {
+            const tokenCount = getTokenCount(assistantContent);
+            if (messages[messages.length - 1].role === 'assistant') {
+              messages[messages.length - 1].tokenCount = tokenCount;
+            }
             setIsGenerating(false);
           } else {
+            assistantContent += response.content;
             if (messages[messages.length - 1].role === 'assistant') {
               messages[messages.length - 1].content += response.content;
             } else {
-              messages.push(response);
+              messages.push({ id: uuidv4(), role: 'assistant', content: response.content, tokenCount: 0 });
             }
-            setConversations((prevConversations: Conversation[]) => {
-              const newConversations = [...prevConversations];
-              const currentConversationIndex = newConversations.findIndex(
-                (conversation) => conversation.id === currentConversation?.id
-              );
-              if (currentConversationIndex !== -1) {
-                newConversations[currentConversationIndex].messages = messages;
-              }
-              return newConversations;
-            });
+            
           }
+          setConversations((prevConversations: Conversation[]) => {
+            const newConversations = [...prevConversations];
+            const currentConversationIndex = newConversations.findIndex(
+              (conversation) => conversation.id === currentConversation?.id
+            );
+            if (currentConversationIndex !== -1) {
+              newConversations[currentConversationIndex].messages = messages;
+            }
+            return newConversations;
+          });
         });
       }
     };
-
+  
     if (isGenerating) {
       callApi();
     }
-  }, [currentConversation, setConversations, isGenerating]);
+  }, [currentConversation, setConversations, isGenerating, getTokenCount]);
+  
 
   useEffect(() => {
     if (messagesEndRef.current) {

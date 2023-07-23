@@ -62,7 +62,8 @@ function MessageBox() {
 						key={index}
 						role={message.role as 'user' | 'assistant'}
 						message={message.content.trim()}
-					/>
+						tokenCount={message.tokenCount}
+						/>
 				))}
 				<div ref={messagesEndRef} />
 			</div>

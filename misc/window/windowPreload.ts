@@ -7,9 +7,12 @@ const ElectronHandler = {
       get(key: string) {
         return ipcRenderer.sendSync('electron-store-get', key);
       },
-      set(property: string, val: unknown) {
-        ipcRenderer.send('electron-store-set', property, val);
-      },      
+      set(key: string, val: unknown) {
+        ipcRenderer.send('electron-store-set', key, val);
+      },
+      delete(key: string) {
+        ipcRenderer.send('electron-store-delete', key);
+      },
       // Other methods like has(), reset(), etc.
     },
   },

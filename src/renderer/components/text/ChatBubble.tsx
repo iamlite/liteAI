@@ -8,9 +8,10 @@ import StyledMarkdown from './StyledMarkdown';
 type ChatBubbleProps = {
 	message: string;
 	role: string;
+	tokenCount: number;
 };
 
-function ChatBubble({ message, role }: ChatBubbleProps) {
+function ChatBubble({ message, role, tokenCount }: ChatBubbleProps) {
 	const [copiedBubble, setCopiedBubble] = useState(false);
 	const chatBubbleRef = useRef<HTMLDivElement>(null);
 	const controls = useAnimation();
@@ -108,7 +109,13 @@ function ChatBubble({ message, role }: ChatBubbleProps) {
 						className={`text-xs text-base-content opacity-50 absolute ${
 							role === 'user' ? 'left-2' : 'right-2'
 						} -bottom-5 truncate`}>
-						Tokens: 25.6K
+						{tokenCount === 0 ? ( 
+							<div style={{ position: 'relative', top: '5px' }}>
+								<span className='loading loading-ring loading-sm'></span>
+							</div>
+						) : (
+							`Tokens: ${tokenCount}`
+						)}
 					</div>
 				</div>
 				<div className='chat-footer'>

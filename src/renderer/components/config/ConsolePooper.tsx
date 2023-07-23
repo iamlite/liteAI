@@ -1,4 +1,5 @@
 import React from 'react';
+import ClearButton from './clearbutton';
 
 const ConsolePooper = () => {
 	const logStoreValues = () => {
@@ -27,7 +28,10 @@ const ConsolePooper = () => {
 		}
 
 		// Helper function to log nested properties
-		const logNestedProperties = (obj: { [x: string]: never; }, indentation = '') => {
+		const logNestedProperties = (
+			obj: { [x: string]: never },
+			indentation = '',
+		) => {
 			for (const key in obj) {
 				if (typeof obj[key] === 'object' && obj[key] !== null) {
 					console.groupCollapsed(
@@ -49,7 +53,6 @@ const ConsolePooper = () => {
 				);
 				logNestedProperties(allStoreValues[key], '\t');
 				console.groupEnd();
-
 			} else if (key === 'stats') {
 				console.log(
 					`%c${emoji3} ${key}`,
@@ -57,7 +60,6 @@ const ConsolePooper = () => {
 				);
 				logNestedProperties(allStoreValues[key], '\t');
 				console.groupEnd();
-
 			} else if (key === 'lightMode' || key === 'darkMode') {
 				console.log(
 					`%c${emoji4} ${key}:`,
@@ -91,12 +93,15 @@ const ConsolePooper = () => {
 	};
 
 	return (
-		<button
-			type='button'
-			className='btn btn-sm btn-warning'
-			onClick={logStoreValues}>
-			Poop
-		</button>
+		<div>
+			<button
+				type='button'
+				className='btn btn-sm btn-warning'
+				onClick={logStoreValues}>
+				Poop
+			</button>
+			<ClearButton />
+		</div>
 	);
 };
 
