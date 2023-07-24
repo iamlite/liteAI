@@ -1,7 +1,9 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useRef } from 'react';
 import { AiOutlineSend, AiFillProfile } from 'react-icons/ai';
 import callDALL_E from './dalleApi';
 import { ToastContext } from '../context/ToastContext';
+import SnippetsMenu from './SnippetsMenu';
+import ReactDOM from 'react-dom';
 
 interface ImageGenerationInputProps {
 	onImageGenerated: (b64_image: string) => void;
@@ -15,6 +17,8 @@ const ImageGenerationInput: React.FC<ImageGenerationInputProps> = ({
 	const [size, setSize] = useState('256x256');
 	const [loading, setLoading] = useState(false);
 	const { addToast } = useContext(ToastContext);
+	const [menuVisible, setMenuVisible] = useState(false);
+	const buttonRef = useRef<HTMLButtonElement>(null);
 
 	const handleSubmit = async (event: React.FormEvent) => {
 		event.preventDefault();
@@ -40,6 +44,14 @@ const ImageGenerationInput: React.FC<ImageGenerationInputProps> = ({
 		setLoading(false);
 	};
 
+	const toggleMenu = () => {
+		setMenuVisible(!menuVisible);
+	};
+
+	const handleSnippetSelect = (snippet: string) => {
+		setPrompt((prevPrompt) => `${prevPrompt} ${snippet}`);
+	};
+
 	return (
 		<div>
 			{loading && (
@@ -53,13 +65,24 @@ const ImageGenerationInput: React.FC<ImageGenerationInputProps> = ({
 				<div>
 					<form onSubmit={handleSubmit}>
 						<div className='flex items-center px-3 py-2 rounded-lg bg-neutral transition ease-in-out duration-500'>
-							<div
-								className='tooltip tooltip-bottom tooltip-accent'
-								data-tip='Coming Soon'>
-								<button type='button' className='btn btn-circle btn-ghost mr-3'>
-									<AiFillProfile className='w-6 h-6 text-secondary' />
-								</button>
-							</div>
+							<button
+								type='button'
+								className='btn btn-circle btn-ghost mr-3'
+								ref={buttonRef}
+								onClick={toggleMenu}>
+								<AiFillProfile className='w-6 h-6 text-secondary' />
+							</button>
+
+							{menuVisible &&
+								ReactDOM.createPortal(
+									<SnippetsMenu
+										visible={menuVisible}
+										buttonRef={buttonRef}
+										onSelect={handleSnippetSelect}
+									/>,
+									document.body,
+								)}
+
 							<textarea
 								id='textnput'
 								rows={1}

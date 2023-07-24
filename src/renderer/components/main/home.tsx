@@ -39,7 +39,7 @@ const HomePage = () => {
 							<div className='stat-value text-primary'>
 								{getTotalTokenUsage()}
 							</div>
-							<div className='stat-desc'>something interesting goes here</div>
+							<div className='stat-desc'>(without context)</div>
 						</motion.div>
 						<motion.div
 							className='stat'
@@ -157,10 +157,9 @@ const HomePage = () => {
 						onClick={handleTextClick}
 						whileHover={{ scale: 1.1 }}
 						whileTap={{ scale: 0.95 }}>
-						<AiFillWechat
-							className='absolute top-0 bottom-0 left-0 right-0 w-[150%] h-[120%] z-10 opacity-10'
-							style={{ color: 'yourColor' }}
-						/>
+
+						<AiFillWechat className='absolute top-0 bottom-0 left-0 right-0 w-[150%] h-[120%] z-10 opacity-5'/>
+
 						<motion.div className='card-body z-20 relative'>
 							<motion.h2 className='card-title text-primary'>
 								Start a Chat
@@ -181,10 +180,9 @@ const HomePage = () => {
 						onClick={handleimgClick}
 						whileHover={{ scale: 1.1 }}
 						whileTap={{ scale: 0.95 }}>
-						<AiOutlinePicture
-							className='absolute top-0 bottom-0 left-0 right-0 w-[150%] h-[130%] z-10 opacity-10'
-							style={{ color: 'yourColor' }}
-						/>
+
+						<AiOutlinePicture className='absolute top-0 bottom-0 left-0 right-0 w-[150%] h-[130%] z-10 opacity-5' />
+
 						<motion.div className='card-body z-20 relative'>
 							<motion.h2 className='card-title text-secondary'>
 								Generate an Image

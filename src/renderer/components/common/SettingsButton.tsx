@@ -28,7 +28,7 @@ function SettingsButton({ onClick }: SettingsButtonProps) {
   return (
     <button
       type="button"
-      className={`flex items-center ${isActive ? 'border-b-2 rounded-xl opacity-75' : ''}`}
+      className={`flex items-center rounded-full ${isActive ? 'drop-shadow-md shadow-lg' : ''}`}
       onClick={onClick}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}

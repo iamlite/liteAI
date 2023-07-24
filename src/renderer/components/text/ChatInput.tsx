@@ -3,6 +3,7 @@ import {
   AiFillCloseCircle,
   AiOutlineSend,
   AiFillProfile,
+  AiOutlineClose,
 } from 'react-icons/ai';
 import { callOpenAI, stopOpenAI } from './openaiApi';
 import { useSettings } from '../context/SettingsContext';
@@ -10,6 +11,24 @@ import { useConversations, Conversation, Message } from '../context/Conversation
 import { ToastContext } from '../context/ToastContext';
 import { v4 as uuidv4 } from 'uuid';
 import { useTiktoken } from '@components/context/TiktokenContext';
+import SnippetsMenu from './TSnippetsMenu';
+import ReactDOM from 'react-dom';
+import { motion } from 'framer-motion';
+
+function useOutsideClick(ref: React.RefObject<HTMLElement>, callback: () => void) {
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (ref.current && !ref.current.contains(event.target as Node)) {
+        callback();
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [ref, callback]);
+}
 
 function ChatInput() {
   const { settings } = useSettings();
@@ -27,6 +46,8 @@ function ChatInput() {
   const [isGenerating, setIsGenerating] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const [menuVisible, setMenuVisible] = useState(false);
+  const buttonRef = useRef<HTMLButtonElement>(null);
   const scrollToBottom = () => {
     if (messagesEndRef.current) {
       messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
@@ -115,12 +136,12 @@ function ChatInput() {
         });
       }
     };
-  
+
     if (isGenerating) {
       callApi();
     }
   }, [currentConversation, setConversations, isGenerating, getTokenCount, incrementTotalTokenUsage]);
-  
+
 
   useEffect(() => {
     if (messagesEndRef.current) {
@@ -136,23 +157,62 @@ function ChatInput() {
     }
   }, [message]);
 
+  const toggleMenu = () => {
+    setMenuVisible(!menuVisible);
+  };
+
+  const handleSnippetSelect = (snippet: string) => {
+    setMessage((prevMessage) => `${prevMessage} ${snippet}`);
+  };
+
+  const menuRef = useRef(null);
+  useOutsideClick(menuRef, () => setMenuVisible(false));
+
+  const clearInput = () => {
+    setMessage('');
+  };
+
   return (
-    <footer className="text-center">
+    <motion.footer
+      className="text-center"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5 }}
+    >
       <div>
         <form onSubmit={handleSubmit}>
           <div className="flex items-center px-3 py-2 rounded-lg bg-neutral transition ease-in-out duration-500">
-            <div
-              className="tooltip tooltip-bottom tooltip-accent"
-              data-tip="Coming Soon"
+            <motion.button
+              id="promptHelperBtn"
+              type='button'
+              className='bg-transparent rounded-full mx-3'
+              ref={buttonRef}
+              onClick={toggleMenu}
+              whileHover={{ scale: [null, 1.5, 1.3, 1.4] }}
+              transition={{ duration: 0.3 }}
+              whileTap={{ scale: 0.9 }}
             >
-              <button
-                id="speeddial"
-                type="button"
-                className="btn btn-circle btn-ghost mr-3"
-              >
-                <AiFillProfile className="w-6 h-6 text-secondary" />
-              </button>
-            </div>
+              <AiFillProfile className='w-6 h-6 text-secondary' />
+            </motion.button>
+
+            {menuVisible &&
+              ReactDOM.createPortal(
+                <motion.div
+                  ref={menuRef}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.5 }}
+                >
+                  <SnippetsMenu
+                    visible={menuVisible}
+                    buttonRef={buttonRef}
+                    onSelect={handleSnippetSelect}
+                  />
+                </motion.div>,
+                document.body,
+              )}
+
             <textarea
               ref={textareaRef}
               id="textnput"
@@ -163,27 +223,45 @@ function ChatInput() {
               onChange={(event) => setMessage(event.target.value)}
               onKeyDown={handleKeyDown}
             />
-            <button
+            {message && (
+              <motion.button
+                type="button"
+                className="bg-transparent rounded-full mx-3"
+                onClick={clearInput}
+                whileHover={{ scale: 1.5 }}
+                whileTap={{ scale: 0.9 }}
+              >
+                <AiOutlineClose className="w-4 h-4 text-secondary" />
+              </motion.button>
+            )}
+            <motion.button
               id="sendBtn"
               type="submit"
-              className="btn btn-circle btn-ghost mx-3"
+              className="bg-transparent rounded-full mx-3"
+              whileHover={{ scale: [null, 1.5, 1.3, 1.4] }}
+              transition={{ duration: 0.3 }}
+              whileTap={{ scale: 0.9 }}
             >
               <AiOutlineSend className="w-6 h-6 text-secondary" />
-            </button>
+            </motion.button>
 
-            <button
-              type="button"
-              id="stopBtn"
-              disabled={!isGenerating}
-              onClick={handleStop}
-              className="btn btn-circle btn-ghost mx-3 hover:translate-x-5 disabled:cursor-not-allowed"
-            >
-              <AiFillCloseCircle className="w-6 h-6 text-error" />
-            </button>
+            {isGenerating && (
+              <motion.button
+                type="button"
+                id="stopBtn"
+                onClick={handleStop}
+                className="bg-transparent rounded-full mx-3"
+                whileHover={{ scale: [null, 1.5, 1.3, 1.4] }}
+                transition={{ duration: 0.3 }}
+                whileTap={{ scale: 0.9 }}
+              >
+                <AiFillCloseCircle className="w-6 h-6 text-error" />
+              </motion.button>
+            )}
           </div>
         </form>
       </div>
-    </footer>
+    </motion.footer>
   );
 }
 

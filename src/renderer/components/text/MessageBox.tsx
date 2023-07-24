@@ -1,4 +1,5 @@
 import React, { useRef, useEffect, useMemo } from 'react';
+import { motion, animate, useMotionValue, useTransform } from 'framer-motion';
 import { HiOutlineTrash, HiInboxArrowDown } from 'react-icons/hi2';
 import { useConversations } from '../context/ConversationContext';
 import ChatBubble from './ChatBubble';
@@ -23,13 +24,22 @@ function MessageBox() {
 		return messages.reduce((sum, message) => sum + message.tokenCount, 0);
 	}, [messages]);
 
+	const totalTokensMotion = useMotionValue(0);
+    const totalTokensDisplay = useTransform(totalTokensMotion, value => Math.round(value));
+
+    useEffect(() => {
+        const controls = animate(totalTokensMotion, totalTokens, { duration: 5 });
+
+        return controls.stop;
+    }, [totalTokens]);
+
 	useEffect(scrollToBottom, [messages]);
 
 	scrollToBottom();
 
 	const downloadConversation = () => {
 		if (!currentConversation) return;
-		const data = JSON.stringify(currentConversation, null, 2); // null and 2 are for formatting purposes
+		const data = JSON.stringify(currentConversation, null, 2);
 		const blob = new Blob([data], { type: 'application/json' });
 		const url = URL.createObjectURL(blob);
 		const link = document.createElement('a');
@@ -49,7 +59,7 @@ function MessageBox() {
 				</div>
 				<div className='flex flex-col ml-3 text-neutral-content'>
 					<div className='font-semibold text-sm'>
-						Total Tokens: {totalTokens}
+						Total Tokens: <motion.div className="inline-block">{totalTokensDisplay}</motion.div>
 					</div>
 					<div className='text-xs'>
 						Chat ID:{' '}
