@@ -131,20 +131,6 @@ const HomePage = () => {
 						/>
 					</motion.div>
 				</motion.div>
-				{/* <motion.div className='flex flex-row mx-auto'>
-					<div className='mockup-code bg-accent w-full'>
-						<pre data-prefix='$'>
-							<code>Recent Updates:</code>
-						</pre>
-						<pre data-prefix='>' className='text-warning'>
-							<code>DALL-E 2 Image Generation Support!</code>
-						</pre>
-						<pre data-prefix='>' className='text-success'>
-							<code>TikToken Support!</code>
-						</pre>
-					</div>
-				</motion.div> */}
-
 				<motion.div
 					className='flex flex-row px-4 py-16 mx-auto sm:max-w-xl md:max-w-full lg:max-w-screen-xl md:px-24 lg:px-8 lg:py-20'
 					initial={{ opacity: 0 }}
@@ -185,7 +171,7 @@ const HomePage = () => {
 
 						<motion.div className='card-body z-20 relative'>
 							<motion.h2 className='card-title text-secondary'>
-								Generate an Image
+								Generate an Image <span className='text-primary'>(Beta)</span>
 							</motion.h2>
 							<motion.p>
 								Generate stunning images with just a few clicks. Your creativity

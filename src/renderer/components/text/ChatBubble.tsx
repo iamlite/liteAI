@@ -14,6 +14,7 @@ type ChatBubbleProps = {
 
 function ChatBubble({ message, role, tokenCount }: ChatBubbleProps) {
 	const [copiedBubble, setCopiedBubble] = useState(false);
+	const [copiedCode, setCopiedCode] = useState(false);
 	const chatBubbleRef = useRef<HTMLDivElement>(null);
 	const controls = useAnimation();
 
@@ -22,13 +23,21 @@ function ChatBubble({ message, role, tokenCount }: ChatBubbleProps) {
 		if (copiedBubble) {
 			timeoutId = setTimeout(() => setCopiedBubble(false), 2000);
 		}
+		if (copiedCode) {
+			timeoutId = setTimeout(() => setCopiedCode(false), 2000);
+		}
 		return () => clearTimeout(timeoutId);
-	}, [copiedBubble]);
+	}, [copiedBubble, copiedCode]);
 
 	const handleBubbleCopy = () => {
 		if (!chatBubbleRef.current) return;
 		navigator.clipboard.writeText(chatBubbleRef.current.innerText);
 		setCopiedBubble(true);
+	};
+
+	const handleCodeCopy = (code: string) => {
+		navigator.clipboard.writeText(code);
+		setCopiedCode(true);
 	};
 
 	const renderCodeBlock = (code: string, language: string, index: number) => {
@@ -49,8 +58,8 @@ function ChatBubble({ message, role, tokenCount }: ChatBubbleProps) {
 				<button
 					type='button'
 					className='btn btn-xs btn-circle btn-base-100 absolute top-1 right-1 text-xs opacity-10 hover:opacity-100 transition duration-500'
-					onClick={handleBubbleCopy}>
-					{copiedBubble ? <BiCheck /> : <BiCopy />}
+					onClick={() => handleCodeCopy(code)}>
+					{copiedCode ? <BiCheck /> : <BiCopy />}
 				</button>
 			</div>
 		);
@@ -82,11 +91,10 @@ function ChatBubble({ message, role, tokenCount }: ChatBubbleProps) {
 				<div className='chat-header' />
 				<div
 					ref={chatBubbleRef}
-					className={`chat-bubble ${
-						role === 'assistant'
+					className={`chat-bubble ${role === 'assistant'
 							? 'chat-bubble-base-100'
 							: 'chat-bubble-primary'
-					} max-w-[50%] py-3 px-4 rounded-xl drop-shadow-lg transition ease-in-out duration-500`}
+						} max-w-[50%] py-3 px-4 rounded-xl drop-shadow-lg transition ease-in-out duration-500`}
 					style={{
 						whiteSpace: 'pre-wrap',
 						minHeight: '1em',
@@ -107,9 +115,8 @@ function ChatBubble({ message, role, tokenCount }: ChatBubbleProps) {
 						<StyledMarkdown>{message}</StyledMarkdown>
 					)}
 					<div
-						className={`text-xs text-base-content opacity-50 absolute ${
-							role === 'user' ? 'left-2' : 'right-2'
-						} -bottom-5 truncate`}>
+						className={`text-xs text-base-content opacity-50 absolute ${role === 'user' ? 'left-2' : 'right-2'
+							} -bottom-5 truncate`}>
 						{tokenCount === 0 ? (
 							<div style={{ position: 'relative', top: '5px' }}>
 								<span className='loading loading-ring loading-sm'></span>
