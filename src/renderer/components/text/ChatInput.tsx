@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef, useContext } from 'react';
 import {
   AiFillCloseCircle,
   AiOutlineSend,
-  AiFillProfile,
+  AiFillTags,
   AiOutlineClose,
 } from 'react-icons/ai';
 import { callOpenAI, stopOpenAI } from './openaiApi';
@@ -192,7 +192,7 @@ function ChatInput() {
               transition={{ duration: 0.3 }}
               whileTap={{ scale: 0.9 }}
             >
-              <AiFillProfile className='w-6 h-6 text-secondary' />
+              <AiFillTags className='w-6 h-6 text-secondary' />
             </motion.button>
 
             {menuVisible &&

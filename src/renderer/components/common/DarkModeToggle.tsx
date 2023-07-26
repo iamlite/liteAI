@@ -1,6 +1,6 @@
 import React, { useContext, useState } from 'react';
 import { HiMiniMoon, HiSun } from 'react-icons/hi2';
-import { motion } from 'framer-motion'; // Import motion from Framer Motion
+import { motion } from 'framer-motion';
 import { ToastContext } from '../context/ToastContext';
 import { useTheme } from '../context/ThemeContext';
 
@@ -54,7 +54,7 @@ function DarkModeToggle() {
           initial={false}
           animate={isHovered ? 'hovered' : 'unhovered'}
           variants={moonVariants}
-          transition={{ duration: 0.2 }} // Adjust duration as needed
+          transition={{ duration: 0.2 }}
         >
           <HiMiniMoon id="darkModeIcon" className="w-6 h-6" />
         </motion.span>
@@ -63,7 +63,7 @@ function DarkModeToggle() {
           initial={false}
           animate={isHovered ? 'hovered' : 'unhovered'}
           variants={sunVariants}
-          transition={{ duration: 0.2 }} // Adjust duration as needed
+          transition={{ duration: 0.2 }}
         >
           <HiSun id="lightModeIcon" className="w-7 h-7" />
         </motion.span>

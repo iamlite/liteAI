@@ -6,14 +6,13 @@ import {
 	useLocation,
 } from 'react-router-dom';
 import Titlebar from '@misc/window/Titlebar';
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence } from 'framer-motion';
 import { useSettings } from './context/SettingsContext';
 import { useTheme, themeNames } from './context/ThemeContext';
 import Sidebar from './common/Sidebar';
 import MainContent from './text/TextMainContent';
 import ImgMainContent from './image/ImgMainContent';
 import Settings from './config/Settings';
-import ChatList from './text/ChatList';
 import Loading from './Load';
 import './Application.css';
 import HomePage from './main/home';
@@ -34,7 +33,6 @@ function App() {
 	const { setSettings } = useSettings();
 	const [isLoading, setIsLoading] = useState(true);
 	const { theme } = useTheme();
-	const [isChatListOpen, setIsChatListOpen] = useState(false);
 
 	useEffect(() => {
 		const loadedSettings = window.electron.ipcRenderer.store.get('settings');
@@ -45,9 +43,6 @@ function App() {
 		setIsLoading(false);
 	}, [setSettings]);
 
-	const toggleChatList = () => {
-		setIsChatListOpen(!isChatListOpen);
-	};
 
 	if (isLoading) {
 		return <Loading />;
@@ -61,19 +56,7 @@ function App() {
 				data-theme={`${themeNames[theme]}`}>
 				<Titlebar />
 				<div className='flex h-screen overflow-hidden bg-base-100'>
-					<Sidebar toggleChatList={toggleChatList} />
-					<AnimatePresence mode='wait'>
-						{isChatListOpen && (
-							<motion.div
-								key='chatList'
-								initial={{ opacity: 0, x: -50 }}
-								animate={{ opacity: 1, x: 0 }}
-								exit={{ opacity: 0, x: -50 }}
-								transition={{ duration: 0.3 }}>
-								<ChatList />
-							</motion.div>
-						)}
-					</AnimatePresence>
+					<Sidebar />
 					<PageTransitionWrapper>
 						<Route path='/' element={<HomePage />} />
 						<Route path='/text' element={<MainContent />} />

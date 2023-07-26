@@ -1,18 +1,26 @@
-import React, { useRef, useEffect, useMemo } from 'react';
+import React, { useRef, useEffect, useMemo, useState } from 'react';
 import { motion, animate, useMotionValue, useTransform } from 'framer-motion';
 import { HiOutlineTrash, HiInboxArrowDown } from 'react-icons/hi2';
+import { AiOutlineMenu } from 'react-icons/ai';
 import { useConversations } from '../context/ConversationContext';
 import ChatBubble from './ChatBubble';
 
-function MessageBox() {
+function MessageBox({ toggleChatList }: { toggleChatList: () => void }) {
 	const messagesEndRef = useRef<HTMLDivElement | null>(null);
 	const { currentConversation, clearCurrentConversation } = useConversations();
+
+	const [isChatListOpen, setIsChatListOpen] = useState(false);
 
 	const scrollToBottom = () => {
 		if (messagesEndRef.current?.parentElement) {
 			messagesEndRef.current.parentElement.scrollTop =
 				messagesEndRef.current.parentElement.scrollHeight;
 		}
+	};
+
+	const handleToggleChatList = () => {
+		toggleChatList();
+		setIsChatListOpen(!isChatListOpen);
 	};
 
 	const messages =
@@ -25,13 +33,13 @@ function MessageBox() {
 	}, [messages]);
 
 	const totalTokensMotion = useMotionValue(0);
-    const totalTokensDisplay = useTransform(totalTokensMotion, value => Math.round(value));
+	const totalTokensDisplay = useTransform(totalTokensMotion, value => Math.round(value));
 
-    useEffect(() => {
-        const controls = animate(totalTokensMotion, totalTokens, { duration: 5 });
+	useEffect(() => {
+		const controls = animate(totalTokensMotion, totalTokens, { duration: 5 });
 
-        return controls.stop;
-    }, [totalTokens]);
+		return controls.stop;
+	}, [totalTokens]);
 
 	useEffect(scrollToBottom, [messages]);
 
@@ -52,10 +60,15 @@ function MessageBox() {
 	return (
 		<div className='flex flex-col h-full mb-5 overflow-hidden'>
 			<div className='flex flex-row items-center p-5 rounded-3xl bg-neutral transition ease-in-out duration-500'>
-				<div className='avatar placeholder'>
-					<div className='bg-neutral-focus text-neutral-content rounded-full w-12'>
-						<span>MX</span>
-					</div>
+				<div className='p-2'>
+					<button
+						type='button'
+						className='btn btn-circle btn-ghost'
+						onClick={handleToggleChatList}
+						style={{ transform: `rotate(${isChatListOpen ? "90deg" : "0deg"})` }}
+					>
+						<AiOutlineMenu className='w-5 h-5' />
+					</button>
 				</div>
 				<div className='flex flex-col ml-3 text-neutral-content'>
 					<div className='font-semibold text-sm'>

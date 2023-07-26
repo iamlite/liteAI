@@ -24,7 +24,7 @@ const HomePage = () => {
 			initial={{ opacity: 0 }}
 			animate={{ opacity: 1 }}
 			exit={{ opacity: 0 }}
-			transition={{ duration: 0.5 }}>
+			transition={{ duration: 0.1 }}>
 			<div className='flex flex-col bg-base-300 rounded-3xl h-full w-full justify-center'>
 				<div className='flex justify-center'>
 					<motion.div className='stats shadow scrollbar-none'>
