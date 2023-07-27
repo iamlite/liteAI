@@ -1,26 +1,24 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 import Application from '@components/Application';
-import { SettingsProvider } from './components/context/SettingsContext';
-import { ToastProvider } from './components/context/ToastContext';
-import { ThemeProvider } from './components/context/ThemeContext';
-import { ConversationProvider } from './components/context/ConversationContext';
-import { TiktokenProvider } from './components/context/TiktokenContext';
+import { SettingsProvider } from '@context/SettingsContext';
+import { ToastProvider } from '@context/ToastContext';
+import { ThemeProvider } from '@context/ThemeContext';
+import { ConversationProvider } from '@context/ConversationContext';
+import { TiktokenProvider } from '@context/TiktokenContext';
 
 const app = (
-
-  <TiktokenProvider>
-    <ConversationProvider>
-      <ToastProvider>
-        <SettingsProvider>
+  <SettingsProvider>
+    <TiktokenProvider>
+      <ConversationProvider>
+        <ToastProvider>
           <ThemeProvider>
             <Application />
           </ThemeProvider>
-        </SettingsProvider>
-      </ToastProvider>
-    </ConversationProvider>
-  </TiktokenProvider>
-
+        </ToastProvider>
+      </ConversationProvider>
+    </TiktokenProvider>
+  </SettingsProvider>
 );
 
 createRoot(document.getElementById('app')).render(app);

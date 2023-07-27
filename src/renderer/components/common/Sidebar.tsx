@@ -27,7 +27,7 @@ function Sidebar() {
 
 	const sidebarVariants = {
 		open: { width: '200px', transition: { type: 'spring', stiffness: 200 } },
-		closed: { width: '80px', transition: { type: 'spring', stiffness: 100 } },
+		closed: { width: '80px', transition: { type: 'spring', stiffness: 200 } },
 	};
 
 	const isActive = (path: string) => location.pathname === path;
@@ -38,6 +38,27 @@ function Sidebar() {
 		open: { opacity: 1, x: 0, display: 'inline', transition: { duration: 0.3 } },
 		closed: { opacity: 0, x: 30, display: 'none', transition: { duration: 0.3 } },
 	};
+	const hoverDelay = 400;
+	let expandTimeout: string | number | NodeJS.Timeout;
+	let collapseTimeout: string | number | NodeJS.Timeout;
+	const [, setIsMouseInside] = useState(false);
+
+	const handleMouseEnter = () => {
+		clearTimeout(collapseTimeout);
+		setIsMouseInside(true);
+		expandTimeout = setTimeout(() => {
+			setIsExpanded(true);
+		}, hoverDelay);
+	};
+
+	const handleMouseLeave = () => {
+		clearTimeout(expandTimeout);
+		setIsMouseInside(false);
+		collapseTimeout = setTimeout(() => {
+			setIsExpanded(false);
+		}, hoverDelay);
+	};
+
 
 	return (
 		<div className='flex flex-row pl-5 pb-7 pt-10 flex-grow'>
@@ -47,31 +68,12 @@ function Sidebar() {
 				animate={isExpanded ? 'open' : 'closed'}
 				variants={sidebarVariants}
 				transition={{ type: 'spring', stiffness: 100, restDelta: 2 }}
-				onMouseEnter={() => setIsExpanded(true)}
-				onMouseLeave={() => setTimeout(() => setIsExpanded(false), 300)}
+				onMouseEnter={handleMouseEnter}
+				onMouseLeave={handleMouseLeave}
 			>
 				<div className='flex items-center justify-center h-12 w-12 rounded-full bg-secondary'>
 					<HiFire className='w-10 h-10' />
 				</div>
-
-				<AnimatePresence>
-					{isExpanded && (
-						<motion.div
-							className='text-2xl'
-							variants={textVariants}
-							initial='closed'
-							animate='open'
-							exit='closed'
-						>
-							<hr className="h-px border-t-0 bg-transparent bg-gradient-to-r from-transparent via-white/50 to-transparent mt-5" />
-							LiteAI
-							<hr className="h-px border-t-0 bg-transparent bg-gradient-to-r from-transparent via-white/50 to-transparent" />
-
-						</motion.div>
-
-					)}
-				</AnimatePresence>
-
 				<div className='flex flex-col space-y-2 mt-12 w-full'>
 					{buttons.map((button) => (
 						<button

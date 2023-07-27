@@ -1,21 +1,23 @@
 import React, { ChangeEvent } from 'react';
+import { useSettings } from '@components/context/SettingsContext';
 
-type AdvancedSectionProps = {
-  settings: {
-    endpointURL: string;
-    imageGenEndpointURL: string;
-    temperature: number;
-    presencePenalty: number;
-    frequencyPenalty: number;
-    [key: string]: string | number;
-  };
-  handleInputChange: (event: ChangeEvent<HTMLInputElement>) => void;
+type Settings = {
+  [K: string]: string | number;
 };
 
-function AdvancedSection({
-  settings,
-  handleInputChange,
-}: AdvancedSectionProps) {
+function AdvancedSection() {
+  const { settings, setSettings } = useSettings() as { settings: Settings, setSettings: React.Dispatch<React.SetStateAction<Settings>> };
+
+  const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const { target } = event;
+    const value = target.type === 'range' ? parseFloat(target.value) : target.value;
+    const { name } = target;
+    setSettings((prevSettings) => ({
+      ...prevSettings,
+      [name]: value,
+    }));
+  };
+
   const renderRangeInput = (
     name: string,
     label: string,

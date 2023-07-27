@@ -21,11 +21,11 @@ const ConsolePooper = () => {
 		const emoji4 = '🔻';
 		const emoji5 = '🔽';
 
-		// Remove userAvatar and assistantAvatar from settings before logging
-		if (allStoreValues && allStoreValues.settings) {
-			delete allStoreValues.settings.userAvatar;
-			delete allStoreValues.settings.assistantAvatar;
-		}
+		// // Remove userAvatar and assistantAvatar from settings before logging
+		// if (allStoreValues && allStoreValues.settings) {
+		// 	delete allStoreValues.settings.userAvatar;
+		// 	delete allStoreValues.settings.assistantAvatar;
+		// }
 
 		// Helper function to log nested properties
 		const logNestedProperties = (

@@ -4,7 +4,7 @@ import {
   HiOutlineTrash,
 } from 'react-icons/hi2';
 import { motion } from 'framer-motion';
-import { useConversations, Message } from '../context/ConversationContext';
+import { useConversations, Message } from '@context/ConversationContext';
 import React from 'react';
 import { useLocation } from 'react-router-dom';
 
@@ -48,13 +48,8 @@ function ChatList() {
     setCurrentConversation(null);
   };
 
-    // Use the useLocation hook to get the current location
     const location = useLocation();
-
-    // Check if the pathname is '/text'
     const isTextRoute = location.pathname === '/text';
-  
-    // If not on the '/text' route, don't render the ChatList component
     if (!isTextRoute) {
       return null;
     }

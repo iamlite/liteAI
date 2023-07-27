@@ -8,7 +8,6 @@ declare global {
 
 export { ElectronHandler };
 
-console.log('[ERWT] : Preload execution started');
 // Get versions
 window.addEventListener('DOMContentLoaded', () => {
 	const app = document.getElementById('app');

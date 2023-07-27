@@ -96,13 +96,20 @@ export async function callOpenAI(
 	controller = new AbortController();
 	const { signal } = controller;
 
+	// Ensure correct types
+	const modelName = String(settings.modelName);
+	let maxTokens = Number(settings.maxTokens);
+	maxTokens = isNaN(maxTokens) ? 0 : Math.floor(maxTokens);
+	let temperature = Number(settings.temperature);
+	temperature = isNaN(temperature) ? 0 : temperature;
+	let frequencyPenalty = Number(settings.frequencyPenalty);
+	frequencyPenalty = isNaN(frequencyPenalty) ? 0 : frequencyPenalty;
+	let presencePenalty = Number(settings.presencePenalty);
+	presencePenalty = isNaN(presencePenalty) ? 0 : presencePenalty;
+
+
 	const {
 		endpointURL,
-		modelName,
-		maxTokens,
-		temperature,
-		frequencyPenalty,
-		presencePenalty,
 		initialPrompt,
 	} = settings;
 

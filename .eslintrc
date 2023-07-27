@@ -26,7 +26,13 @@
           ["@main", "./src/main"],
           ["@src", "./src"],
           ["@misc", "./misc"],
-          ["@assets", "./assets"]
+          ["@assets", "./assets"],
+          ["@images", "./assets/images"],
+          ["@config", "./src/renderer/components/config"],
+          ["@commonrenderer", "./src/renderer/components/common"],
+          ["@context", "./src/renderer/components/context"],
+          ["@image", "./src/renderer/components/image"],
+          ["@text", "./src/renderer/components/text"]
         ],
         "extensions": [".js", ".jsx", ".ts", ".tsx"]
       }

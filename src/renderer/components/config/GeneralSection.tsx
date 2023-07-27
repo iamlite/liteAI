@@ -1,23 +1,11 @@
 import React, { ChangeEvent, useState } from 'react';
 import { Combobox } from '@headlessui/react';
+import { useSettings } from '@components/context/SettingsContext';
 
 const modelNames = ['gpt-3.5-turbo', 'gpt-3.5-turbo-16k', 'gpt-4'];
 
-interface Settings {
-  openAIKey: string;
-  maxTokens: number;
-  modelName: string;
-}
-
-interface GeneralSectionComponentProps {
-  settings: Settings;
-  handleInputChange: (event: ChangeEvent<HTMLInputElement>) => void;
-}
-
-export default function GeneralSectionComponent({
-  settings,
-  handleInputChange,
-}: GeneralSectionComponentProps) {
+export default function GeneralSectionComponent() {
+  const { settings, setSettings } = useSettings();
   const [selectedModel, setSelectedModel] = useState(settings.modelName);
   const [query, setQuery] = useState('');
 
@@ -28,15 +16,25 @@ export default function GeneralSectionComponent({
           return model.toLowerCase().includes(query.toLowerCase());
         });
 
-  const handleComboboxChange = (value: React.SetStateAction<string>) => {
-    setSelectedModel(value);
-    handleInputChange({
-      target: {
-        name: 'modelName',
-        value,
-      },
-    } as ChangeEvent<HTMLInputElement>);
-  };
+        const handleComboboxChange = (value: string) => {
+          setSelectedModel(value);
+          
+          setSettings((prevSettings) => ({
+            ...prevSettings,
+            modelName: value,
+          }));
+        };
+        
+
+const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
+  const { name, value } = event.target;
+  
+  setSettings((prevSettings) => ({
+    ...prevSettings,
+    [name]: value,
+  }));
+};
+
 
   return (
     <>

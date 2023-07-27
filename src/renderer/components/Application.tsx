@@ -7,12 +7,12 @@ import {
 } from 'react-router-dom';
 import Titlebar from '@misc/window/Titlebar';
 import { AnimatePresence } from 'framer-motion';
-import { useSettings } from './context/SettingsContext';
-import { useTheme, themeNames } from './context/ThemeContext';
+import { useSettings } from '@context/SettingsContext';
+import { useTheme, themeNames } from '@context/ThemeContext';
 import Sidebar from './common/Sidebar';
-import MainContent from './text/TextMainContent';
-import ImgMainContent from './image/ImgMainContent';
-import Settings from './config/Settings';
+import MainContent from '@text/TextMainContent';
+import ImgMainContent from '@image/ImgMainContent';
+import Settings from '@config/Settings';
 import Loading from './Load';
 import './Application.css';
 import HomePage from './main/home';
@@ -30,23 +30,19 @@ function PageTransitionWrapper({ children }: { children: React.ReactNode }) {
 }
 
 function App() {
-	const { setSettings } = useSettings();
-	const [isLoading, setIsLoading] = useState(true);
+	useSettings();
 	const { theme } = useTheme();
+	const [isLoading, setIsLoading] = useState(true);
 
 	useEffect(() => {
-		const loadedSettings = window.electron.ipcRenderer.store.get('settings');
-		if (loadedSettings) {
-			setSettings(loadedSettings);
-		}
-
 		setIsLoading(false);
-	}, [setSettings]);
-
+	}, []);
 
 	if (isLoading) {
 		return <Loading />;
 	}
+
+
 
 	return (
 		<Router>

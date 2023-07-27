@@ -1,8 +1,8 @@
 {
-  "name": "electron-react-typescript-webpack-2023",
-  "productName": "ERWT Boilerplate",
-  "version": "7.6.0",
-  "description": "Custom boilerplate for writing Desktop Applications using Electron, React, Webpack, TypeScript in 2023",
+  "name": "lite-ai",
+  "productName": "LITE AI",
+  "version": "0.5.0",
+  "description": "Chatbot for the OpenAI API",
   "main": ".webpack/main",
   "scripts": {
     "go": "cross-env NODE_ENV=development electron-forge start",
@@ -10,31 +10,6 @@
     "make": "electron-forge make",
     "publish": "electron-forge publish",
     "lint": "eslint src/ --ext .ts,.js,.tsx,.jsx"
-  },
-  "keywords": [
-    "electron boilerplate",
-    "minimal",
-    "electron-webpack",
-    "electron-react",
-    "electron-typescript",
-    "hmr",
-    "boilerplate",
-    "2023",
-    "ERWT"
-  ],
-  "author": {
-    "name": "codesbiome",
-    "url": "https://github.com/codesbiome"
-  },
-  "contributors": [
-    {
-      "name": "guasam",
-      "url": "https://github.com/guasam"
-    }
-  ],
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/codesbiome/electron-react-webpack-typescript-2023"
   },
   "license": "MIT",
   "config": {
@@ -62,7 +37,7 @@
     "classnames": "^2.3.2",
     "cross-env": "^7.0.3",
     "css-loader": "^6.8.1",
-    "daisyui": "^3.2.1",
+    "daisyui": "^3.5.0",
     "electron": "^25.2.0",
     "eslint": "^8.44.0",
     "eslint-import-resolver-alias": "^1.1.2",

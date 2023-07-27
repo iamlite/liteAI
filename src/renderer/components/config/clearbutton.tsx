@@ -2,8 +2,7 @@ import React from 'react';
 
 class ClearButton extends React.Component {
 	handleDeleteClick = () => {
-		const keyToDelete = '';
-		window.electron.ipcRenderer.store.delete(keyToDelete);
+		window.electron.ipcRenderer.store.clear();
 	};
 
 	render() {
@@ -11,7 +10,8 @@ class ClearButton extends React.Component {
 			<button
 				type='button'
 				className='btn btn-error btn-sm'
-				onClick={this.handleDeleteClick}>
+				onClick={this.handleDeleteClick}
+			>
 				Clear Store
 			</button>
 		);

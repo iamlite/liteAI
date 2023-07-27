@@ -29,6 +29,6 @@ ipcMain.on('electron-store-get', async (event, val) => {
 ipcMain.on('electron-store-set', async (event, key, val) => {
   store.set(key, val);
 });
-ipcMain.on('electron-store-delete', (event, key) => {
-  store.delete(key);
+ipcMain.on('electron-store-clear', () => {
+  store.clear();
 });

@@ -8,7 +8,6 @@ declare const APP_WINDOW_PRELOAD_WEBPACK_ENTRY: string;
 
 let appWindow: BrowserWindow;
 
-
 export function createAppWindow(): BrowserWindow {
   appWindow = new BrowserWindow({
     width: 1424,

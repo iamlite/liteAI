@@ -2,24 +2,15 @@ import React, { useContext, useEffect, useState, useRef } from 'react';
 import { AiFillSave, AiFillDelete, AiFillCaretRight, AiFillEdit } from 'react-icons/ai';
 import presetPrompts from './presetPrompts';
 import { ToastContext } from '../context/ToastContext';
-
-interface Settings {
-  initialPrompt: string;
-}
-
-interface Props {
-  settings: Settings;
-  handleInputChange: (
-    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => void;
-}
+import { useSettings } from '../context/SettingsContext'; // make sure to import useSettings from your context file
 
 interface Prompt {
   name: string;
   content: string;
 }
 
-export default function PromptSettings({ settings, handleInputChange }: Props) {
+export default function PromptSettings() {
+  const { settings, setSettings } = useSettings(); // call useSettings
   const [customPrompts, setCustomPrompts] = useState<Prompt[]>([]);
   const [deletedPresetPrompts, setDeletedPresetPrompts] = useState<string[]>([]);
   const [customPromptName, setCustomPromptName] = useState('');
@@ -44,6 +35,17 @@ export default function PromptSettings({ settings, handleInputChange }: Props) {
       inputRef.current.focus();
     }
   }, [isCreating]);
+
+  const handleInputChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const { target } = event;
+    const value = target.value;
+    const { name } = target;
+
+    setSettings((prevSettings) => ({
+      ...prevSettings,
+      [name]: value,
+    }));
+  };
 
   const handleCreatePrompt = () => {
     setIsCreating(true);

@@ -10,10 +10,9 @@ const ElectronHandler = {
       set(key: string, val: unknown) {
         ipcRenderer.send('electron-store-set', key, val);
       },
-      delete(key: string) {
-        ipcRenderer.send('electron-store-delete', key);
+      clear() {
+        ipcRenderer.send('electron-store-clear', );
       },
-      // Other methods like has(), reset(), etc.
     },
   },
 };

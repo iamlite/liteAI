@@ -1,10 +1,4 @@
-import React, {
-  useEffect,
-  useState,
-  useContext,
-  ChangeEvent,
-  FormEvent,
-} from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { motion } from 'framer-motion';
 import ConfirmationDialog from './ConfirmationDialog';
 import { ToastContext } from '../context/ToastContext';
@@ -14,7 +8,6 @@ import AvatarSectionComponent from './CustomizeSection';
 import GeneralSectionComponent from './GeneralSection';
 import PromptSettings from './PromptSection';
 import {
-  SettingsProvider,
   useSettings,
   defaultSettings,
 } from '../context/SettingsContext';
@@ -24,51 +17,18 @@ import ConsolePooper from './ConsolePooper';
 function Settings() {
   const { addToast } = useContext(ToastContext);
   const [showConfirmation, setShowConfirmation] = useState(false);
-  const [avatars, setAvatars] = useState({
-    userAvatar:
-      localStorage.getItem('userAvatarURL') || defaultSettings.userAvatar,
-    assistantAvatar:
-      localStorage.getItem('assistantAvatarURL') ||
-      defaultSettings.assistantAvatar,
-  });
-  const { settings, setSettings } = useSettings();
+  const { setSettings } = useSettings();
   const [activeTab, setActiveTab] = useState('general');
   const { setPreferredLightThemeName, setPreferredDarkThemeName } = useTheme();
 
   useEffect(() => {
     const loadedSettings = window.electron.ipcRenderer.store.get('settings');
     if (loadedSettings) {
-      setAvatars({
-        userAvatar: loadedSettings.userAvatar || defaultSettings.userAvatar,
-        assistantAvatar:
-          loadedSettings.assistantAvatar || defaultSettings.assistantAvatar,
-      });
       setSettings(loadedSettings);
     } else {
       window.electron.ipcRenderer.store.set('settings', defaultSettings);
     }
   }, [setSettings]);
-
-  useEffect(() => {
-    setSettings((prevSettings) => ({
-      ...prevSettings,
-      userAvatar: avatars.userAvatar,
-      assistantAvatar: avatars.assistantAvatar,
-    }));
-
-    window.electron.ipcRenderer.store.set(
-      'settings.userAvatar',
-      avatars.userAvatar
-    );
-    window.electron.ipcRenderer.store.set(
-      'settings.assistantAvatar',
-      avatars.assistantAvatar
-    );
-  }, [avatars, setSettings]);
-
-  useEffect(() => {
-    window.electron.ipcRenderer.store.set('settings', settings);
-  }, [settings]);
 
   const handleResetSettings = () => {
     setShowConfirmation(true);
@@ -76,16 +36,10 @@ function Settings() {
 
   const handleConfirmReset = () => {
     setSettings(defaultSettings);
-    setAvatars({
-      userAvatar: defaultSettings.userAvatar,
-      assistantAvatar: defaultSettings.assistantAvatar,
-    });
     setPreferredLightThemeName(defaultLightTheme);
     setPreferredDarkThemeName(defaultDarkTheme);
 
     window.electron.ipcRenderer.store.set('settings', defaultSettings);
-    localStorage.setItem('userAvatarURL', defaultSettings.userAvatar);
-    localStorage.setItem('assistantAvatarURL', defaultSettings.assistantAvatar);
     addToast('Settings have been reset to default.', 'warning');
     setShowConfirmation(false);
   };
@@ -94,22 +48,7 @@ function Settings() {
     setShowConfirmation(false);
   };
 
-  const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const { target } = event;
-    const value =
-      target.type === 'checkbox' ? String(target.checked) : target.value;
-    const { name } = target;
-    const parsedValue =
-      name === 'presencePenalty' || name === 'frequencyPenalty'
-        ? parseFloat(value)
-        : value;
-    setSettings((prevSettings) => ({
-      ...prevSettings,
-      [name]: parsedValue,
-    }));
-  };
-
-  const handleFormSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     try {
       addToast('Settings saved successfully!', 'success');
@@ -122,6 +61,7 @@ function Settings() {
     setActiveTab(tabName);
   };
 
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -130,7 +70,6 @@ function Settings() {
       transition={{ duration: 0.2 }}
       style={{ width: '100%' }}
     >
-      <SettingsProvider>
         <div className="flex h-screen justify-center items-center overflow-hidden pb-7 pt-10 px-5">
           <div className="flex flex-row p-2 w-full h-full rounded-3xl drop-shadow-lg overflow-hidden border-2 border-base-100 bg-base-300">
             <div className="flex items-center w-1/4">
@@ -163,28 +102,16 @@ function Settings() {
                 className="flex-grow flex flex-col"
               >
                 {activeTab === 'general' && (
-                  <GeneralSectionComponent
-                    settings={settings}
-                    handleInputChange={handleInputChange}
-                  />
+                  <GeneralSectionComponent />
                 )}
                 {activeTab === 'customize' && (
-                  <AvatarSectionComponent
-                    avatars={avatars}
-                    setAvatars={setAvatars}
-                  />
+                  <AvatarSectionComponent />
                 )}
                 {activeTab === 'prompt' && (
-                  <PromptSettings
-                    settings={settings}
-                    handleInputChange={handleInputChange}
-                  />
+                  <PromptSettings/>
                 )}
                 {activeTab === 'advanced' && (
-                  <AdvancedSection
-                    settings={settings}
-                    handleInputChange={handleInputChange}
-                  />
+                  <AdvancedSection />
                 )}
 
                 <div className="flex-grow" />
@@ -216,7 +143,6 @@ function Settings() {
             onCancel={handleCancelReset}
           />
         )}
-      </SettingsProvider>
     </motion.div>
   );
 }

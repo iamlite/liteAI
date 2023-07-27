@@ -4,6 +4,7 @@ import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import { BiCopy, BiCheck } from 'react-icons/bi';
 import StyledMarkdown from './StyledMarkdown';
+import { useSettings } from '@context/SettingsContext';
 
 type ChatBubbleProps = {
 	message: string;
@@ -17,6 +18,9 @@ function ChatBubble({ message, role, tokenCount }: ChatBubbleProps) {
 	const [copiedCode, setCopiedCode] = useState(false);
 	const chatBubbleRef = useRef<HTMLDivElement>(null);
 	const controls = useAnimation();
+	const { settings } = useSettings();
+	const avatarURL = role === 'user' ? settings.userAvatar : settings.assistantAvatar;
+	const isShortMessage = message.length < 10;
 
 	useEffect(() => {
 		let timeoutId: ReturnType<typeof setTimeout>;
@@ -69,12 +73,6 @@ function ChatBubble({ message, role, tokenCount }: ChatBubbleProps) {
 		controls.start({ opacity: 1, y: 0 });
 	}, [controls]);
 
-	const avatarURL = localStorage.getItem(
-		role === 'user' ? 'userAvatarURL' : 'assistantAvatarURL',
-	);
-
-	const isShortMessage = message.length < 10;
-
 	return (
 		<motion.div
 			initial={{ opacity: 0, y: 40 }}
@@ -92,8 +90,8 @@ function ChatBubble({ message, role, tokenCount }: ChatBubbleProps) {
 				<div
 					ref={chatBubbleRef}
 					className={`chat-bubble ${role === 'assistant'
-							? 'chat-bubble-base-100'
-							: 'chat-bubble-primary'
+						? 'chat-bubble-base-100'
+						: 'chat-bubble-primary'
 						} max-w-[50%] py-3 px-4 rounded-xl drop-shadow-lg transition ease-in-out duration-500`}
 					style={{
 						whiteSpace: 'pre-wrap',

@@ -1,24 +1,23 @@
-import React, { useContext, ChangeEvent } from 'react';
+import React, { useContext, ChangeEvent, useEffect } from 'react';
 import { AiOutlineCloudUpload } from 'react-icons/ai';
 import { ToastContext } from '../context/ToastContext';
+import { useSettings } from '../context/SettingsContext';
 import ThemePicker from './ThemePrefs';
 
-interface Avatars {
-  userAvatar: string;
-  assistantAvatar: string;
-}
-
-interface AvatarSectionProps {
-  avatars: Avatars;
-  setAvatars: React.Dispatch<React.SetStateAction<Avatars>>;
-}
-
-function AvatarSectionComponent({ avatars, setAvatars }: AvatarSectionProps) {
+function CustomizeSectionComponent() {
   const { addToast } = useContext(ToastContext);
+  const { settings, setSettings } = useSettings();
+
+  useEffect(() => {
+    const loadedSettings = window.electron.ipcRenderer.store.get('settings');
+    if (loadedSettings) {
+      setSettings(loadedSettings);
+    }
+  }, [setSettings]);
 
   const handleAvatarChange = (
     event: ChangeEvent<HTMLInputElement>,
-    avatarType: keyof Avatars
+    avatarType: 'userAvatar' | 'assistantAvatar'
   ) => {
     const file = event.target.files?.[0];
     if (file) {
@@ -30,11 +29,14 @@ function AvatarSectionComponent({ avatars, setAvatars }: AvatarSectionProps) {
             typeof avatarURL === 'string'
               ? avatarURL
               : new TextDecoder().decode(avatarURL as ArrayBuffer);
-          setAvatars((prevAvatars) => ({
-            ...prevAvatars,
+          setSettings((prevSettings) => ({
+            ...prevSettings,
             [avatarType]: avatarURLString,
           }));
-          localStorage.setItem(`${avatarType}URL`, avatarURLString);
+          window.electron.ipcRenderer.store.set(
+            `settings.${avatarType}`,
+            avatarURLString
+          );
           addToast(`${avatarType} avatar updated successfully!`, 'success');
         } catch (error) {
           addToast(
@@ -49,7 +51,7 @@ function AvatarSectionComponent({ avatars, setAvatars }: AvatarSectionProps) {
 
   const handleDrop = (
     event: React.DragEvent<HTMLDivElement>,
-    avatarType: keyof Avatars
+    avatarType: 'userAvatar' | 'assistantAvatar'
   ) => {
     event.preventDefault();
     const file = event.dataTransfer.files?.[0];
@@ -62,11 +64,14 @@ function AvatarSectionComponent({ avatars, setAvatars }: AvatarSectionProps) {
             typeof avatarURL === 'string'
               ? avatarURL
               : new TextDecoder().decode(avatarURL as ArrayBuffer);
-          setAvatars((prevAvatars) => ({
-            ...prevAvatars,
+          setSettings((prevSettings) => ({
+            ...prevSettings,
             [avatarType]: avatarURLString,
           }));
-          localStorage.setItem(`${avatarType}URL`, avatarURLString);
+          window.electron.ipcRenderer.store.set(
+            `settings.${avatarType}`,
+            avatarURLString
+          );
           addToast(`${avatarType} avatar updated successfully!`, 'success');
         } catch (error) {
           addToast(
@@ -79,7 +84,7 @@ function AvatarSectionComponent({ avatars, setAvatars }: AvatarSectionProps) {
     }
   };
 
-  const renderDropzone = (avatarType: keyof Avatars) => (
+  const renderDropzone = (avatarType: 'userAvatar' | 'assistantAvatar') => (
     <div
       className="w-1/2 items-center p-4"
       key={avatarType}
@@ -91,7 +96,7 @@ function AvatarSectionComponent({ avatars, setAvatars }: AvatarSectionProps) {
           {avatarType === 'userAvatar' ? 'User Avatar:' : 'Assistant Avatar:'}
         </label>
         <img
-          src={avatars[avatarType]}
+          src={settings[avatarType]}
           alt={avatarType === 'userAvatar' ? 'User Avatar' : 'Assistant Avatar'}
           className="h-12 w-12 my-3 rounded-full"
         />
@@ -138,4 +143,4 @@ function AvatarSectionComponent({ avatars, setAvatars }: AvatarSectionProps) {
   );
 }
 
-export default AvatarSectionComponent;
+export default CustomizeSectionComponent;

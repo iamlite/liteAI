@@ -6,11 +6,11 @@ import {
   AiOutlineClose,
 } from 'react-icons/ai';
 import { callOpenAI, stopOpenAI } from './openaiApi';
-import { useSettings } from '../context/SettingsContext';
-import { useConversations, Conversation, Message } from '../context/ConversationContext';
-import { ToastContext } from '../context/ToastContext';
+import { useSettings } from '@context/SettingsContext';
+import { useConversations, Conversation, Message } from '@context/ConversationContext';
+import { ToastContext } from '@context/ToastContext';
 import { v4 as uuidv4 } from 'uuid';
-import { useTiktoken } from '@components/context/TiktokenContext';
+import { useTiktoken } from '@context/TiktokenContext';
 import SnippetsMenu from './TSnippetsMenu';
 import ReactDOM from 'react-dom';
 import { motion } from 'framer-motion';
