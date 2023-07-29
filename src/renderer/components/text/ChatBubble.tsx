@@ -81,7 +81,7 @@ function ChatBubble({ message, role, tokenCount }: ChatBubbleProps) {
 			<div className={`chat ${role === 'user' ? 'chat-end' : 'chat-start'}`}>
 				{avatarURL && (
 					<div className='chat-image avatar'>
-						<div className='w-10 mask mask-hexagon'>
+						<div className='w-10 mask mask-squircle'>
 							<img src={avatarURL} alt={role} />
 						</div>
 					</div>

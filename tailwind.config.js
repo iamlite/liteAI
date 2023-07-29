@@ -77,16 +77,14 @@ module.exports = {
 				},
 			},
 			{
-				'DefaultDark': {
+				DefaultDark: {
 					'color-scheme': 'dark',
 					primary: '#3a2787',
-					secondary: '#687cd6',
-					accent: '#343232',
-					'base-100': '#1C1C1C',
-					'base-200': '#333333',
-					'base-300': '#1A1919',
-					neutral: '#272626',
-					'neutral-focus': '#343232',
+					secondary: '#bd93f9',
+					accent: '#687cd6',
+					neutral: '#414558',
+					'base-100': '#282a36',
+					'base-content': '#f8f8f2',
 					info: '#88c1e7',
 					success: '#68deca',
 					warning: '#c16e10',
@@ -94,7 +92,7 @@ module.exports = {
 				},
 			},
 			{
-				'DefaultLight': {
+				DefaultLight: {
 					primary: '#afb1ed',
 					secondary: '#687cd6',
 					accent: '#f8ffa3',

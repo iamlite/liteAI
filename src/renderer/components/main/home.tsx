@@ -1,7 +1,8 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { AiOutlineHeart, AiFillApi, AiOutlineArrowRight, AiFillWechat, AiOutlinePicture } from 'react-icons/ai';
+import { AiFillApi, AiOutlineArrowRight, AiFillWechat, AiOutlinePicture } from 'react-icons/ai';
+import { RiOpenaiFill } from 'react-icons/ri' 
 import { HiFire } from 'react-icons/hi';
 import { useTiktoken } from '@components/context/TiktokenContext';
 
@@ -33,7 +34,7 @@ const HomePage = () => {
 							whileHover={{ scale: 1.1 }}
 							whileTap={{ scale: 0.95 }}>
 							<div className='stat-figure text-primary'>
-								<AiOutlineHeart className='text-3xl' />
+								<RiOpenaiFill className='text-3xl' />
 							</div>
 							<div className='stat-title'>Total Tokens Used</div>
 							<div className='stat-value text-primary'>
@@ -66,8 +67,8 @@ const HomePage = () => {
 							whileHover={{ scale: 1.1 }}
 							whileTap={{ scale: 0.95 }}>
 							<div className='stat-figure text-secondary'>
-								<div className='avatar'>
-									<div className='w-16 rounded-full'>
+								<div className='mask mask-squircle'>
+									<div className='w-16 rounded-full '>
 										<img
 											src={window.electron.ipcRenderer.store.get(
 												'settings.userAvatar',

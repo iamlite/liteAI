@@ -7,26 +7,32 @@ import ReactDOM from 'react-dom';
 
 interface ImageGenerationInputProps {
 	onImageGenerated: (b64_image: string) => void;
+	setLoading: (loading: boolean) => void;
 }
 
 const ImageGenerationInput: React.FC<ImageGenerationInputProps> = ({
 	onImageGenerated,
+	setLoading,
 }) => {
 	const [prompt, setPrompt] = useState('');
 	const [n, setN] = useState(1);
 	const [size, setSize] = useState('256x256');
-	const [loading, setLoading] = useState(false);
 	const { addToast } = useContext(ToastContext);
 	const [menuVisible, setMenuVisible] = useState(false);
 	const buttonRef = useRef<HTMLButtonElement>(null);
+	const [isOpen1, setIsOpen1] = useState(false);
+	const [isOpen2, setIsOpen2] = useState(false);
+	const [history, setHistory] = useState<string[]>([]);
+	const [pointer, setPointer] = useState(-1);
 
 	const handleSubmit = async (event: React.FormEvent) => {
 		event.preventDefault();
-
 		if (prompt.trim() !== '') {
 			setLoading(true);
 			setPrompt('');
 			addToast('Generating...', 'info');
+			setHistory([prompt, ...history]);
+			setPointer(-1);
 			await callDALL_E({ prompt, n, size }, handleResponse);
 		}
 	};
@@ -35,6 +41,23 @@ const ImageGenerationInput: React.FC<ImageGenerationInputProps> = ({
 		if (event.key === 'Enter' && !event.shiftKey) {
 			event.preventDefault();
 			handleSubmit(event);
+		}
+
+		if (event.key === 'ArrowUp') {
+			if (history.length > 0 && pointer < history.length - 1) {
+				setPointer(pointer + 1);
+				setPrompt(history[pointer + 1]);
+			}
+		}
+
+		if (event.key === 'ArrowDown') {
+			if (pointer > 0) {
+				setPointer(pointer - 1);
+				setPrompt(history[pointer - 1]);
+			} else if (pointer === 0) {
+				setPrompt('');
+				setPointer(-1);
+			}
 		}
 	};
 
@@ -54,13 +77,6 @@ const ImageGenerationInput: React.FC<ImageGenerationInputProps> = ({
 
 	return (
 		<div>
-			{loading && (
-				<div className='fixed inset-0 flex items-center justify-center z-50'>
-					<div className='absolute inset-0 bg-black opacity-90'></div>
-					<span className='loading loading-ring loading-lg'></span>
-				</div>
-			)}
-
 			<footer className='text-center'>
 				<div>
 					<form onSubmit={handleSubmit}>
@@ -92,26 +108,36 @@ const ImageGenerationInput: React.FC<ImageGenerationInputProps> = ({
 								onChange={(event) => setPrompt(event.target.value)}
 								onKeyDown={handleKeyDown}
 							/>
-							<select
-								value={n}
-								onChange={(event) => setN(Number(event.target.value))}
-								className='btn btn-outline btn-sm btn-neutral-content mx-3'>
-								{Array.from({ length: 10 }, (_, i) => (
-									<option key={i} value={i + 1}>
-										{i + 1}
-									</option>
-								))}
-							</select>
-							<select
-								value={size}
-								onChange={(event) => setSize(event.target.value)}
-								className='btn btn-outline btn-sm btn-neutral-content mx-3'>
-								{['256x256', '512x512', '1024x1024'].map((option) => (
-									<option key={option} value={option}>
-										{option}
-									</option>
-								))}
-							</select>
+
+							<div className="dropdown dropdown-top">
+								<label tabIndex={0} className="btn m-1 btn-sm outline-none mx-3" onClick={() => setIsOpen1(!isOpen1)}>
+									{n}
+								</label>
+								{isOpen1 && (
+									<ul tabIndex={0} className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52">
+										{Array.from({ length: 10 }, (_, i) => (
+											<li key={i}>
+												<a onClick={() => { setN(i + 1); setIsOpen1(false); }}>{i + 1}</a>
+											</li>
+										))}
+									</ul>
+								)}
+							</div>
+							<div className="dropdown dropdown-top">
+								<label tabIndex={0} className="btn m-1 btn-sm outline-none mx-3" onClick={() => setIsOpen2(!isOpen2)}>
+									{size}
+								</label>
+								{isOpen2 && (
+									<ul tabIndex={0} className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52">
+										{['256x256', '512x512', '1024x1024'].map((option) => (
+											<li key={option}>
+												<a onClick={() => { setSize(option); setIsOpen2(false); }}>{option}</a>
+											</li>
+										))}
+									</ul>
+								)}
+							</div>
+
 							<button
 								id='sendBtn'
 								type='submit'

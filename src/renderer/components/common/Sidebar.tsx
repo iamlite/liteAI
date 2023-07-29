@@ -1,5 +1,6 @@
 import { useNavigate, useLocation } from 'react-router-dom';
 import { HiFire, HiHome, HiCog, HiChatBubbleLeftEllipsis, HiPhoto } from 'react-icons/hi2';
+import { AiFillLeftCircle, AiFillRightCircle } from 'react-icons/ai';
 import { motion, AnimatePresence } from 'framer-motion';
 import React, { useState } from 'react';
 import DarkModeToggle from './DarkModeToggle';
@@ -14,6 +15,7 @@ const buttons: SidebarButton[] = [
 	{ path: '/', icon: <HiHome className='w-6 h-6' />, label: 'Home' },
 	{ path: '/text', icon: <HiChatBubbleLeftEllipsis className='w-6 h-6' />, label: 'Chat' },
 	{ path: '/img', icon: <HiPhoto className='w-6 h-6' />, label: 'Image' },
+	{ path: '/settings', icon: <HiCog className='w-6 h-6' />, label: 'Settings' },
 ];
 
 function Sidebar() {
@@ -26,39 +28,27 @@ function Sidebar() {
 	};
 
 	const sidebarVariants = {
-		open: { width: '200px', transition: { type: 'spring', stiffness: 200 } },
-		closed: { width: '80px', transition: { type: 'spring', stiffness: 200 } },
+		open: {
+			width: '200px',
+			transition: { type: 'spring', stiffness: 300, damping: 10 },
+		},
+		closed: {
+			width: '80px',
+			transition: { type: 'spring', stiffness: 300, damping: 10 },
+		},
 	};
 
 	const isActive = (path: string) => location.pathname === path;
-	const [isSettingsHovered, setIsSettingsHovered] = useState(false);
 	const buttonStyle = isExpanded ? 'btn btn-ghost justify-start' : 'btn btn-circle btn-ghost';
 
 	const textVariants = {
 		open: { opacity: 1, x: 0, display: 'inline', transition: { duration: 0.3 } },
 		closed: { opacity: 0, x: 30, display: 'none', transition: { duration: 0.3 } },
 	};
-	const hoverDelay = 400;
-	let expandTimeout: string | number | NodeJS.Timeout;
-	let collapseTimeout: string | number | NodeJS.Timeout;
-	const [, setIsMouseInside] = useState(false);
 
-	const handleMouseEnter = () => {
-		clearTimeout(collapseTimeout);
-		setIsMouseInside(true);
-		expandTimeout = setTimeout(() => {
-			setIsExpanded(true);
-		}, hoverDelay);
+	const toggleExpansion = () => {
+		setIsExpanded(!isExpanded);
 	};
-
-	const handleMouseLeave = () => {
-		clearTimeout(expandTimeout);
-		setIsMouseInside(false);
-		collapseTimeout = setTimeout(() => {
-			setIsExpanded(false);
-		}, hoverDelay);
-	};
-
 
 	return (
 		<div className='flex flex-row pl-5 pb-7 pt-10 flex-grow'>
@@ -67,9 +57,7 @@ function Sidebar() {
 				initial={false}
 				animate={isExpanded ? 'open' : 'closed'}
 				variants={sidebarVariants}
-				transition={{ type: 'spring', stiffness: 100, restDelta: 2 }}
-				onMouseEnter={handleMouseEnter}
-				onMouseLeave={handleMouseLeave}
+				transition={{ type: 'spring'}}
 			>
 				<div className='flex items-center justify-center h-12 w-12 rounded-full bg-secondary'>
 					<HiFire className='w-10 h-10' />
@@ -104,33 +92,12 @@ function Sidebar() {
 					))}
 				</div>
 				<DarkModeToggle />
-				<button
-					type='button'
-					className={`${buttonStyle} ${isActive('/settings') ? 'drop-shadow-md shadow-lg' : ''}`}
-					onClick={() => handleButtonClick('/settings')}
-					onMouseEnter={() => setIsSettingsHovered(true)}
-					onMouseLeave={() => setIsSettingsHovered(false)}
+				<button 
+					type='button' 
+					className='btn btn-circle btn-xs btn-outline my-5' 
+					onClick={toggleExpansion}
 				>
-					<span className='flex items-center justify-start'>
-						<span className='flex items-center'>
-							<motion.span animate={{ rotate: isSettingsHovered ? 360 : 0 }} transition={{ duration: 1, loop: Infinity }}>
-								<HiCog className='w-6 h-6' />
-							</motion.span>
-							<AnimatePresence>
-								{isExpanded && (
-									<motion.span
-										className='ml-2'
-										variants={textVariants}
-										initial='closed'
-										animate='open'
-										exit='closed'
-									>
-										Settings
-									</motion.span>
-								)}
-							</AnimatePresence>
-						</span>
-					</span>
+					{isExpanded ? <AiFillLeftCircle className='w-5 h-5' /> : <AiFillRightCircle className='w-5 h-5' />}
 				</button>
 			</motion.div>
 		</div>

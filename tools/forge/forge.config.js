@@ -21,7 +21,7 @@ module.exports = {
       // Windows applications and is therefore the most user friendly you can get.
       name: '@electron-forge/maker-squirrel',
       config: {
-        name: 'electron-react-typescript-webpack-2022',
+        name: 'lite-ai',
       },
     },
     {
@@ -53,7 +53,7 @@ plugins: [
       devContentSecurityPolicy: "default-src *; script-src * 'unsafe-inline' 'unsafe-eval' data:; style-src * 'unsafe-inline' data:; img-src * data:; font-src * data:; object-src *; media-src *; frame-src *; connect-src *;",
       // devContentSecurityPolicy: `default-src 'self' 'unsafe-inline' data: https://api.openai.com; script-src 'self' 'unsafe-inline' data:`,
         // Ports
-        port: 3000, // Webpack Dev Server port
+        port: 3200, // Webpack Dev Server port
         loggerPort: 9000, // Logger port
         // Main process webpack configuration
         mainConfig: path.join(rootDir, 'tools/webpack/webpack.main.js'),

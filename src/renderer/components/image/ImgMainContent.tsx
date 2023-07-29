@@ -9,6 +9,7 @@ const ImgMainContent: React.FC = function ImgMainContentComponent() {
   useConversations();
   useSettings();
   const [imageUrls, setImageUrls] = useState<string[]>([]);
+  const [loading, setLoading] = useState(false);
   
   const handleImageGenerated = (url: string) => {
     setImageUrls((prevUrls) => [...prevUrls, url]);
@@ -23,8 +24,8 @@ const ImgMainContent: React.FC = function ImgMainContentComponent() {
       style={{ width: '100%' }}
     >
       <div className="flex flex-col h-full pb-7 pt-10 px-5">
-        <ImgMessageBox imageUrls={imageUrls} />
-        <ImageGenerationInput onImageGenerated={handleImageGenerated} />
+        <ImgMessageBox imageUrls={imageUrls} loading={loading} />
+        <ImageGenerationInput onImageGenerated={handleImageGenerated} setLoading={setLoading}  />
       </div>
     </motion.div>
   );

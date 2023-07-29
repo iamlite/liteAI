@@ -2,7 +2,6 @@ import React, { useRef } from 'react';
 import {
 	HiOutlineTrash,
 	HiArrowDownOnSquare,
-	HiClipboard,
 } from 'react-icons/hi2';
 
 interface ImageDisplayProps {
@@ -11,10 +10,6 @@ interface ImageDisplayProps {
 }
 
 const ImageDisplay: React.FC<ImageDisplayProps> = ({ url, onDelete }) => {
-	const handleCopyUrl = () => {
-		navigator.clipboard.writeText(url);
-	};
-
 	const handleSaveImage = () => {
 		const base64Image = url.split(';base64,').pop();
 		const byteCharacters = atob(base64Image);
@@ -36,32 +31,29 @@ const ImageDisplay: React.FC<ImageDisplayProps> = ({ url, onDelete }) => {
 	const modalRef = useRef<HTMLDialogElement>(null);
 
 	return (
-		<>
-			<div className='relative flex flex-col sm:flex-row p-5 rounded-3xl bg-base-200 transition-all ease-in-out duration-500'>
+		<div>
+			<div className='relative flex flex-col justify-center items-center p-5 rounded-3xl bg-base-200'>
 				<img
-					className='max-h-[250px] max-w-full w-full rounded-lg object-contain cursor-pointer'
+					className='rounded-t-3xl max-h-[250px] max-w-[250px] cursor-pointer'
 					src={`data:image/png;base64,${url}`}
 					alt='Generated'
 					onClick={() => modalRef.current?.showModal()}
 				/>
 
-				<div className='flex flex-col justify-center w-full overflow-hidden mt-5 sm:mt-0 sm:ml-5'>
-					<button className='btn btn-outline my-1' onClick={handleCopyUrl}>
-						<HiClipboard className='w-5 h-5' />
-						Copy URL
-					</button>
-					<button className='btn btn-outline my-1' onClick={handleSaveImage}>
+				<div className='flex flex-row join w-[250px] justify-center rounded-t-none'>
+					<button className='btn btn-outline join-item flex-grow' onClick={handleSaveImage}>
 						<HiArrowDownOnSquare className='w-5 h-5' />
 						Save IMG
 					</button>
 					<button
 						onClick={onDelete}
-						className='btn btn-outline btn-warning my-1'>
+						className='btn btn-outline btn-warning join-item flex-grow'>
 						<HiOutlineTrash className='w-5 h-5' />
 						Delete
 					</button>
 				</div>
 			</div>
+
 
 			<dialog id='my_modal_3' className='modal' ref={modalRef}>
 				<form method='dialog' className='modal-box'>
@@ -82,7 +74,7 @@ const ImageDisplay: React.FC<ImageDisplayProps> = ({ url, onDelete }) => {
 					<button></button> {/* important */}
 				</form>
 			</dialog>
-		</>
+		</div>
 	);
 };
 

@@ -41,6 +41,12 @@ function DarkModeToggle() {
     },
   };
 
+  const spring = {
+    type: 'spring',
+    stiffness: 200,
+    dampening: 10,
+  };
+
   return (
     <button
       type="button"
@@ -54,7 +60,7 @@ function DarkModeToggle() {
           initial={false}
           animate={isHovered ? 'hovered' : 'unhovered'}
           variants={moonVariants}
-          transition={{ duration: 0.2 }}
+          transition={spring}
         >
           <HiMiniMoon id="darkModeIcon" className="w-6 h-6" />
         </motion.span>
@@ -63,7 +69,7 @@ function DarkModeToggle() {
           initial={false}
           animate={isHovered ? 'hovered' : 'unhovered'}
           variants={sunVariants}
-          transition={{ duration: 0.2 }}
+          transition={spring}
         >
           <HiSun id="lightModeIcon" className="w-7 h-7" />
         </motion.span>

@@ -1,7 +1,7 @@
 import { contextBridge, ipcRenderer } from 'electron';
 import titlebarContext from './titlebarContext';
 
-const ElectronHandler = {
+export const ElectronHandler = {
   ipcRenderer: {
     store: {
       get(key: string) {
@@ -22,5 +22,3 @@ contextBridge.exposeInMainWorld('electron', ElectronHandler);
 contextBridge.exposeInMainWorld('electron_window', {
   titlebar: titlebarContext,
 });
-
-export { ElectronHandler };
