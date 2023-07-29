@@ -1,25 +1,43 @@
+// SnippetsMenu.tsx
+
 import React, { RefObject } from 'react';
+import { motion } from 'framer-motion';
+import { snippetsByCategory } from './SnippetsData';
 
 interface SnippetsMenuProps {
 	visible: boolean;
 	buttonRef: RefObject<HTMLButtonElement>;
 	onSelect: (snippet: string) => void;
 }
-// prettier-ignore:start
-const snippetsByCategory = {
-	Photography: ['headshot', 'posed', 'candid', 'photorealistic', 'soft focus', 'close up', 'sideview', 'eye contact', 'full depth of field', 'shallow depth of field',],
-	'Art Style': ['hyper-realistic', 'still-life', 'textured', 'pastel colours', 'painted light', 'bokeh', 'brushstrokes', 'visible brushstrokes',],
-	Landscape: ['pastures', 'serene', 'vistas', 'detailed', 'sun light', 'soft light', 'golden hour light',],
-	Environments: ['stunning environment', 'wide-angle', 'aerial view', 'landscape painting', 'aerial photography', 'massive scale', 'street level view', 'landscape', 'panoramic', 'lush vegetation', 'idyllic', 'overhead shot',],
-	Detail: ['wallpaper', 'poster', 'sharp focus', 'hyperrealism', 'insanely detailed', 'lush detail', 'filigree', 'intricate', 'crystalline', 'perfectionism', 'max detail', '4k uhd', 'spirals', 'tendrils', 'ornate', 'HQ', 'angelic', 'decorations', 'embellishments', 'masterpiece', 'hard edge', 'breathtaking', 'embroidery',],
-	Lighting: ['bloom', 'god rays', 'hard shadows', 'studio lighting', 'soft lighting', 'diffused lighting', 'rim lighting', 'volumetric lighting', 'specular lighting', 'cinematic lighting', 'luminescence', 'translucency', 'subsurface scattering', 'global illumination', 'indirect light', 'radiant light rays', 'bioluminescent details', 'ektachrome', 'glowing', 'shimmering light', 'halo', 'iridescent', 'backlighting', 'caustics',],
-	Colors: ['vibrant', 'muted colors', 'vivid color', 'post-processing', 'color grading', 'tone mapping', 'lush', 'low contrast', 'vintage', 'aesthetic', 'psychedelic', 'monochrome',],
-	'2D Art': ['digital art', 'digital painting', 'trending on artstation', 'golden ratio', 'evocative', 'award winning', 'shiny', 'smooth', 'surreal', 'divine', 'celestial', 'elegant', 'oil painting', 'soft', 'fascinating', 'fine art', 'official art', 'keyvisual', 'color page', 'halftone', 'character design', 'concept art', 'symmetry', 'pixiv fanbox', 'trending on dribbble', 'precise lineart', 'tarot card',],
-	'3D Renders & realism': ['unreal engine', 'octane render', 'bokeh', 'vray', 'houdini render', 'quixel megascans', 'arnold render', '8k uhd', 'ray tracing', 'cgi', 'lumen reflections', 'cgsociety', 'ultra realistic', '100mm', 'film photography', 'dslr', 'cinema4d', 'studio quality', 'film grain', 'analog photo', 'polaroid', 'macro photography', 'overglaze', 'volumetric fog', 'depth of field', 'silhouette', 'motion lines', 'motion blur', 'fisheye', 'ultra-wide angle',],
-};
-// prettier-ignore:end 
 
 const colorClasses = ['badge-primary', 'badge-secondary', 'badge-accent', 'badge-success', 'badge-info', 'badge-warning', 'badge-error', 'badge-outline'];
+
+const containerVariants = {
+	hidden: { opacity: 0 },
+	visible: {
+		opacity: 1,
+		transition: {
+			delayChildren: 0.5,
+			staggerChildren: 0.2,
+		},
+	},
+};
+
+const snippetVariants = {
+	rest: { scale: 1 },
+	hover: { scale: 1.1 },
+	click: { scale: 1.2 },
+};
+
+const categoryVariants = {
+	hidden: { opacity: 0 },
+	visible: {
+		opacity: 1,
+		transition: {
+			duration: 0.5,
+		},
+	},
+};
 
 const SnippetsMenu: React.FC<SnippetsMenuProps> = ({
 	visible,
@@ -35,39 +53,56 @@ const SnippetsMenu: React.FC<SnippetsMenuProps> = ({
 		left: `${left + window.scrollX}px`,
 	};
 
-	let colorIndex = 0; // Initialize color index to 0
-	return (
-		<div
-			className='fixed w-1/3 h-1/2 bg-base-100 border border-base-200 rounded-2xl p-4 overflow-y-auto scrollbar-thin'
-			style={styles}
-		>
-			<div className="sticky top-0 bg-base-200 rounded-xl p-5 my-3">
-				<h1 className='text-xl font-bold'>Prompt Helpers</h1>
-				<p className='text-sm opacity-75'>Click on a snippet to add it to your prompt.</p>
-				<hr className='my-2 opacity-20' />
-			</div>
-			{Object.entries(snippetsByCategory).map(([category, snippets]) => {
-				// Get the current color class for the category
-				const currentColorClass = colorClasses[colorIndex];
-				// Rotate to the next color class
-				colorIndex = (colorIndex + 1) % colorClasses.length;
+	let colorIndex = 0;
 
-				return (
-					<div key={category}>
-						<h4>{category}</h4>
-						{snippets.map((snippet) => (
-							<div
-								key={snippet}
-								className={`cursor-pointer badge badge-lg text-xs ${currentColorClass} m-2`}
-								onClick={() => onSelect(snippet)}
-							>
-								{snippet}
-							</div>
-						))}
-					</div>
-				);
-			})}
-		</div>
+	const renderCategory = ([category, snippets]: [string, string[]]) => {
+		const currentColorClass = colorClasses[colorIndex];
+		colorIndex = (colorIndex + 1) % colorClasses.length;
+
+		return (
+			<motion.div 
+				key={category} 
+				className=''
+				variants={categoryVariants}
+			>
+				<h4>{category}</h4>
+				{snippets.map((snippet) => (
+					<motion.div
+						key={snippet}
+						className={`cursor-pointer badge badge-lg text-xs ${currentColorClass} m-2`}
+						onClick={() => onSelect(snippet)}
+						variants={snippetVariants}
+						whileHover='hover'
+						whileTap='click'
+						initial='rest'
+						animate='rest'
+					>
+						{snippet}
+					</motion.div>
+				))}
+			</motion.div>
+		);
+	};
+
+	return (
+		<motion.div 
+			className='fixed w-1/3 h-1/2 bg-base-200 border border-base-300 rounded-2xl p-4 my-2 overflow-hidden' 
+			style={styles} 
+			variants={containerVariants}
+			initial='hidden'
+			animate='visible'
+		>
+			<div className="h-full w-full overflow-hidden bg-base-100 p-3 rounded-2xl">
+				<div className="h-grow w-full">
+					<h1 className='text-xl font-bold'>Prompt Helpers</h1>
+					<p className='text-sm opacity-75'>Click on a snippet to add it to your prompt.</p>
+					<hr className='my-2 opacity-20' />
+				</div>
+				<motion.div className='flex flex-col h-full w-full py-5 overflow-y-auto scrollbar-thin' variants={containerVariants}>
+					{Object.entries(snippetsByCategory).map(renderCategory)}
+				</motion.div>
+			</div>
+		</motion.div>
 	);
 };
 

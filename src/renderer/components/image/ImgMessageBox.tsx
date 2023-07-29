@@ -1,24 +1,31 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { HiOutlineTrash, HiInboxArrowDown } from 'react-icons/hi2';
 import ImageDisplay from './ImageDisplay';
 import Loading from '@context/Loading';
+import { ToastContext } from '@context/ToastContext';
+
+interface ImageData {
+	url: string;
+	prompt: string;
+	size: string;
+}
 
 interface ImgMessageBoxProps {
-	imageUrls: string[];
+	imageUrls: ImageData[];
 	loading: boolean;
 }
 
 function ImgMessageBox({ imageUrls, loading }: ImgMessageBoxProps) {
 	const [, setRefreshKey] = useState(0);
 	const [showModal, setShowModal] = useState(false);
+	const { addToast } = useContext(ToastContext);
 
 	useEffect(() => {
-		imageUrls.forEach((url) => {
-			const storedImages =
-				window.electron.ipcRenderer.store.get('images') || {};
-			if (!Object.values(storedImages).includes(url)) {
+		imageUrls.forEach((imageData) => {
+			const storedImages = window.electron.ipcRenderer.store.get('images') as Record<string, ImageData> || {};
+			if (!Object.values(storedImages).map(image => image.url).includes(imageData.url)) {
 				const id = Math.random().toString(36).substring(2);
-				const newImageData = { ...storedImages, [id]: url };
+				const newImageData = { ...storedImages, [id]: imageData };
 				window.electron.ipcRenderer.store.set('images', newImageData);
 				setRefreshKey((prevKey) => prevKey + 1);
 			}
@@ -31,18 +38,20 @@ function ImgMessageBox({ imageUrls, loading }: ImgMessageBoxProps) {
 	};
 
 	const deleteImage = (id: string) => {
-		const storedImages = window.electron.ipcRenderer.store.get('images') || {};
+		const storedImages = window.electron.ipcRenderer.store.get('images') as Record<string, ImageData> || {};
 		const updatedImages = { ...storedImages };
 		delete updatedImages[id];
 		window.electron.ipcRenderer.store.set('images', updatedImages);
 		setRefreshKey((prevKey) => prevKey + 1);
+		addToast('Image Deleted', 'warning');
 	};
 
-	const storedImages = window.electron.ipcRenderer.store.get('images') || {};
+	const storedImages = window.electron.ipcRenderer.store.get('images') as Record<string, ImageData> || {};
 
 	const confirmDeleteAllImages = () => {
 		deleteAllImages();
 		setShowModal(false);
+		addToast('All Images Deleted', 'warning');
 	};
 
 	const renderModal = () => {
@@ -108,15 +117,18 @@ function ImgMessageBox({ imageUrls, loading }: ImgMessageBoxProps) {
 						)}
 					</div>
 					<div className='w-full h-full bg-base-300 p-10 rounded-3xl overflow-y-auto overflow-x-hidden scrollbar-thin scrollbar-thumb-rounded-xl scrollbar-thumb-secondary'>
-						<div className='grid grid-cols-2 md:grid-cols-3 gap-4'>
-							{Object.entries(storedImages).map(([id, url]) => (
+					<div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4'>
+							{Object.entries(storedImages).map(([id, imageData]) => (
 								<ImageDisplay
 									key={id}
-									url={url as string}
+									url={imageData.url}
+									prompt={imageData.prompt}
 									onDelete={() => deleteImage(id)}
+									size={imageData.size}
 								/>
 							))}
 						</div>
+
 					</div>
 				</div>
 			</div>

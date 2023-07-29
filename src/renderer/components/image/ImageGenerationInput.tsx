@@ -1,12 +1,12 @@
 import React, { useState, useContext, useRef } from 'react';
 import { AiOutlineSend, AiFillProfile } from 'react-icons/ai';
 import callDALL_E from './dalleApi';
-import { ToastContext } from '../context/ToastContext';
+import { ToastContext } from '@context/ToastContext';
 import SnippetsMenu from './SnippetsMenu';
 import ReactDOM from 'react-dom';
 
 interface ImageGenerationInputProps {
-	onImageGenerated: (b64_image: string) => void;
+	onImageGenerated: (b64_image: string, prompt: string, size: string) => void;
 	setLoading: (loading: boolean) => void;
 }
 
@@ -29,11 +29,10 @@ const ImageGenerationInput: React.FC<ImageGenerationInputProps> = ({
 		event.preventDefault();
 		if (prompt.trim() !== '') {
 			setLoading(true);
-			setPrompt('');
 			addToast('Generating...', 'info');
 			setHistory([prompt, ...history]);
 			setPointer(-1);
-			await callDALL_E({ prompt, n, size }, handleResponse);
+			await callDALL_E({ prompt, n, size }, (response) => handleResponse(response, prompt, size));
 		}
 	};
 
@@ -61,9 +60,9 @@ const ImageGenerationInput: React.FC<ImageGenerationInputProps> = ({
 		}
 	};
 
-	const handleResponse = (response: { b64_image: string }) => {
+	const handleResponse = (response: { b64_image: string }, prompt: string, size: string) => {
 		addToast(`Image generated`, 'success');
-		onImageGenerated(response.b64_image);
+		onImageGenerated(response.b64_image, prompt, size);
 		setLoading(false);
 	};
 
@@ -72,7 +71,7 @@ const ImageGenerationInput: React.FC<ImageGenerationInputProps> = ({
 	};
 
 	const handleSnippetSelect = (snippet: string) => {
-		setPrompt((prevPrompt) => `${prevPrompt} ${snippet}`);
+		setPrompt((prevPrompt) => `${prevPrompt}, ${snippet}`);
 	};
 
 	return (

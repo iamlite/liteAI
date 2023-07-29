@@ -8,12 +8,12 @@ import { useSettings } from '../context/SettingsContext';
 const ImgMainContent: React.FC = function ImgMainContentComponent() {
   useConversations();
   useSettings();
-  const [imageUrls, setImageUrls] = useState<string[]>([]);
+  const [imageUrls, setImageUrls] = useState<{url: string, prompt: string, size: string}[]>([]);
   const [loading, setLoading] = useState(false);
-  
-  const handleImageGenerated = (url: string) => {
-    setImageUrls((prevUrls) => [...prevUrls, url]);
-  };
+
+const handleImageGenerated = (url: string, prompt: string, size: string) => {
+  setImageUrls((prevUrls) => [...prevUrls, {url, prompt, size}]);
+};
 
   return (
     <motion.div
@@ -25,7 +25,7 @@ const ImgMainContent: React.FC = function ImgMainContentComponent() {
     >
       <div className="flex flex-col h-full pb-7 pt-10 px-5">
         <ImgMessageBox imageUrls={imageUrls} loading={loading} />
-        <ImageGenerationInput onImageGenerated={handleImageGenerated} setLoading={setLoading}  />
+        <ImageGenerationInput onImageGenerated={handleImageGenerated} setLoading={setLoading} />
       </div>
     </motion.div>
   );
