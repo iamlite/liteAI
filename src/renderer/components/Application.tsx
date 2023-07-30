@@ -16,7 +16,7 @@ import Settings from '@config/Settings';
 import Loading from './Load';
 import './Application.css';
 import HomePage from './main/home';
-// import WebviewTab from './web';
+
 
 function PageTransitionWrapper({ children }: { children: React.ReactNode }) {
 	const location = useLocation();
@@ -57,7 +57,6 @@ function App() {
 						<Route path='/text' element={<MainContent />} />
 						<Route path='/img' element={<ImgMainContent />} />
 						<Route path='/settings' element={<Settings />} />
-						{/* <Route path='/webview' element={<WebviewTab />} /> */}
 					</PageTransitionWrapper>
 				</div>
 			</div>

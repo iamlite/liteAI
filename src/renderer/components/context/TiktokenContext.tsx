@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useCallback, useMemo } from 'react';
+import React, { createContext, useContext, useCallback, useMemo, useEffect } from 'react';
 import { getEncoding } from 'js-tiktoken';
 
 interface TiktokenContextType {
@@ -42,14 +42,36 @@ export function TiktokenProvider({
     [getTokenCount]
   );
 
-  const incrementTotalTokenUsage = useCallback((tokenCount: number) => {
-    const currentTotalUsage = window.electron.ipcRenderer.store.get('stats.totalTokenUsage') || 0;
-    window.electron.ipcRenderer.store.set('stats.totalTokenUsage', currentTotalUsage + tokenCount);
+  const totalTokenUsage = window.electron.ipcRenderer.store.get('stats.totalTokenUsage') || 0;
+  let pendingIncrement = 0;
+
+  const writeIncrementToStore = useCallback(() => {
+    if (pendingIncrement !== 0) {
+      const currentTotalUsage = window.electron.ipcRenderer.store.get('stats.totalTokenUsage') || 0;
+      const newTotalUsage = currentTotalUsage + pendingIncrement;
+      window.electron.ipcRenderer.store.set('stats.totalTokenUsage', newTotalUsage);
+      pendingIncrement = 0;
+    }
   }, []);
 
-  const getTotalTokenUsage = useCallback(() => {
-    return window.electron.ipcRenderer.store.get('stats.totalTokenUsage') || 0;
+  const incrementTotalTokenUsage = useCallback((tokenCount: number) => {
+    pendingIncrement += tokenCount;
   }, []);
+  
+  const getTotalTokenUsage = useCallback(() => {
+    return totalTokenUsage + pendingIncrement;
+  }, [totalTokenUsage, pendingIncrement]);
+
+  useEffect(() => {
+    const handleBeforeUnload = () => {
+      writeIncrementToStore();
+    };
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, [writeIncrementToStore]);
 
   const contextValue = useMemo(
     () => ({ getTokenCount, getTotalTokens, incrementTotalTokenUsage, getTotalTokenUsage }),

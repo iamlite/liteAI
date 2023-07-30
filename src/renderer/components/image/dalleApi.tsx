@@ -9,9 +9,6 @@ interface DALL_E_Response {
     b64_image: string;
 }
 
-let imagesGenerated = 0;
-let stats = {};
-
 export default async function callDALL_E(
     settings: DALL_E_Settings,
     onStreamResponse: (response: DALL_E_Response) => void
@@ -40,10 +37,12 @@ export default async function callDALL_E(
             console.log('Response Data:', responseData);
             const { data } = responseData;
             data.forEach((imageData: DALL_E_Response) => {
+                // Retrieve the current count of images generated from the Electron store
+                let imagesGenerated = window.electron.ipcRenderer.store.get('stats.imagesGenerated') || 0;
+                // Increment the count
                 imagesGenerated += 1;
-                stats = {...stats, imagesGenerated};
-
-                window.electron.ipcRenderer.store.set('stats', stats);
+                // Save the updated count back to the Electron store
+                window.electron.ipcRenderer.store.set('stats.imagesGenerated', imagesGenerated);
 
                 onStreamResponse({
                     b64_image: imageData.b64_json,

@@ -1,5 +1,3 @@
-// SnippetsMenu.tsx
-
 import React, { RefObject } from 'react';
 import { motion } from 'framer-motion';
 import { snippetsByCategory } from './SnippetsData';

@@ -1,5 +1,5 @@
-import React, { useState, useContext, useRef } from 'react';
-import { AiOutlineSend, AiFillProfile } from 'react-icons/ai';
+import React, { useState, useContext, useRef, useEffect } from 'react';
+import { AiOutlineSend, AiFillTags } from 'react-icons/ai';
 import callDALL_E from './dalleApi';
 import { ToastContext } from '@context/ToastContext';
 import SnippetsMenu from './SnippetsMenu';
@@ -20,8 +20,8 @@ const ImageGenerationInput: React.FC<ImageGenerationInputProps> = ({
 	const { addToast } = useContext(ToastContext);
 	const [menuVisible, setMenuVisible] = useState(false);
 	const buttonRef = useRef<HTMLButtonElement>(null);
-	const [isOpen1, setIsOpen1] = useState(false);
-	const [isOpen2, setIsOpen2] = useState(false);
+	const [nIsOpen, setNIsOpen] = useState(false);
+	const [sizeIsOpen, setSizeIsOpen] = useState(false);
 	const [history, setHistory] = useState<string[]>([]);
 	const [pointer, setPointer] = useState(-1);
 
@@ -33,8 +33,10 @@ const ImageGenerationInput: React.FC<ImageGenerationInputProps> = ({
 			setHistory([prompt, ...history]);
 			setPointer(-1);
 			await callDALL_E({ prompt, n, size }, (response) => handleResponse(response, prompt, size));
+			setPrompt('');
 		}
 	};
+
 
 	const handleKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
 		if (event.key === 'Enter' && !event.shiftKey) {
@@ -59,6 +61,12 @@ const ImageGenerationInput: React.FC<ImageGenerationInputProps> = ({
 			}
 		}
 	};
+
+	useEffect(() => {
+		if (pointer === -1) {
+			setPrompt('');
+		}
+	}, [pointer]);
 
 	const handleResponse = (response: { b64_image: string }, prompt: string, size: string) => {
 		addToast(`Image generated`, 'success');
@@ -85,7 +93,7 @@ const ImageGenerationInput: React.FC<ImageGenerationInputProps> = ({
 								className='btn btn-circle btn-ghost mr-3'
 								ref={buttonRef}
 								onClick={toggleMenu}>
-								<AiFillProfile className='w-6 h-6 text-secondary' />
+								<AiFillTags className='w-6 h-6 text-secondary' />
 							</button>
 
 							{menuVisible &&
@@ -107,30 +115,31 @@ const ImageGenerationInput: React.FC<ImageGenerationInputProps> = ({
 								onChange={(event) => setPrompt(event.target.value)}
 								onKeyDown={handleKeyDown}
 							/>
-
+							{/* N Dropdown */}
 							<div className="dropdown dropdown-top">
-								<label tabIndex={0} className="btn m-1 btn-sm outline-none mx-3" onClick={() => setIsOpen1(!isOpen1)}>
+								<label tabIndex={0} className="btn m-1 btn-sm outline-none mx-3" onClick={() => setNIsOpen(!nIsOpen)}>
 									{n}
 								</label>
-								{isOpen1 && (
+								{nIsOpen && (
 									<ul tabIndex={0} className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52">
 										{Array.from({ length: 10 }, (_, i) => (
 											<li key={i}>
-												<a onClick={() => { setN(i + 1); setIsOpen1(false); }}>{i + 1}</a>
+												<a onClick={() => { setN(i + 1); setNIsOpen(false); }}>{i + 1}</a>
 											</li>
 										))}
 									</ul>
 								)}
 							</div>
+							{/* Size Dropdown */}
 							<div className="dropdown dropdown-top">
-								<label tabIndex={0} className="btn m-1 btn-sm outline-none mx-3" onClick={() => setIsOpen2(!isOpen2)}>
+								<label tabIndex={0} className="btn m-1 btn-sm outline-none mx-3" onClick={() => setSizeIsOpen(!sizeIsOpen)}>
 									{size}
 								</label>
-								{isOpen2 && (
+								{sizeIsOpen && (
 									<ul tabIndex={0} className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52">
 										{['256x256', '512x512', '1024x1024'].map((option) => (
 											<li key={option}>
-												<a onClick={() => { setSize(option); setIsOpen2(false); }}>{option}</a>
+												<a onClick={() => { setSize(option); setSizeIsOpen(false); }}>{option}</a>
 											</li>
 										))}
 									</ul>
