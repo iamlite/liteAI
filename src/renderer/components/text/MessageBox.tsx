@@ -63,7 +63,7 @@ function MessageBox({ toggleChatList }: { toggleChatList: () => void }) {
 				<div className='p-2'>
 					<button
 						type='button'
-						className='btn btn-circle btn-ghost'
+						className='btn btn-circle btn-ghost text-neutral-content'
 						onClick={handleToggleChatList}
 						style={{ transform: `rotate(${isChatListOpen ? "90deg" : "0deg"})` }}
 					>

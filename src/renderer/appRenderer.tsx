@@ -7,18 +7,19 @@ import { ThemeProvider } from '@context/ThemeContext';
 import { ConversationProvider } from '@context/ConversationContext';
 import { TiktokenProvider } from '@context/TiktokenContext';
 
+
 const app = (
-  <SettingsProvider>
-    <TiktokenProvider>
-      <ConversationProvider>
-        <ToastProvider>
-          <ThemeProvider>
-            <Application />
-          </ThemeProvider>
-        </ToastProvider>
-      </ConversationProvider>
-    </TiktokenProvider>
-  </SettingsProvider>
+    <SettingsProvider>
+      <TiktokenProvider>
+        <ConversationProvider>
+          <ToastProvider>
+            <ThemeProvider>
+              <Application />
+            </ThemeProvider>
+          </ToastProvider>
+        </ConversationProvider>
+      </TiktokenProvider>
+    </SettingsProvider>
 );
 
 createRoot(document.getElementById('app')).render(app);

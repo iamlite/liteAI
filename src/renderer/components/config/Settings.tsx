@@ -70,79 +70,79 @@ function Settings() {
       transition={{ duration: 0.2 }}
       style={{ width: '100%' }}
     >
-        <div className="flex h-screen justify-center items-center overflow-hidden pb-7 pt-10 px-5">
-          <div className="flex flex-row p-2 w-full h-full rounded-3xl drop-shadow-lg overflow-hidden border-2 border-base-100 bg-base-300">
-            <div className="flex items-center w-1/4">
-              <nav className="flex flex-col w-full p-5 space-y-2">
-                {['General', 'Customize', 'Prompt', 'Advanced'].map((tab) => (
-                  <button
-                    key={tab}
-                    type="button"
-                    onClick={() => handleTabChange(tab.toLowerCase())}
-                    className={`flex flex-grow border-b-2 py-2 px-4 hover:text-primary hover:border-primary transition duration-300
+      <div className="flex h-screen justify-center items-center overflow-hidden pb-7 pt-10 px-5">
+        <div className="flex flex-row p-2 w-full h-full rounded-3xl drop-shadow-lg overflow-hidden border-2 border-base-100 bg-base-300">
+          <div className="flex items-center w-1/6">
+            <nav className="flex flex-col w-full p-5 space-y-2">
+              {['General', 'Advanced', 'Customize', 'Prompt'].map((tab) => (
+                <button
+                  key={tab}
+                  type="button"
+                  onClick={() => handleTabChange(tab.toLowerCase())}
+                  className={`flex flex-grow border-b-2 py-2 px-4 hover:text-primary hover:border-primary transition duration-300
                   cursor-pointer'
-                  ${
-                    activeTab === tab.toLowerCase()
+                  ${activeTab === tab.toLowerCase()
                       ? 'border-primary'
                       : 'border-transparent'
-                  }`}
-                  >
-                    {tab}
-                  </button>
-                ))}
-              </nav>
-            </div>
+                    }`}
+                >
+                  {tab}
+                </button>
+              ))}
+            </nav>
+          </div>
 
-            <div className="w-0.5 bg-gradient-to-b from-transparent via-neutral-500 to-transparent opacity-25 dark:opacity-50" />
+          <div className="w-0.5 bg-gradient-to-b from-transparent via-neutral-500 to-transparent opacity-25 dark:opacity-50" />
 
-            {/* Main Content */}
-            <div className="flex flex-col w-3/4 p-10 overflow-y-auto overflow-x-hidden scroll-smooth overscroll-auto scrollbar-thin scrollbar-thumb-rounded-xl scrollbar-thumb-primary">
-              <form
-                onSubmit={handleFormSubmit}
-                className="flex-grow flex flex-col"
-              >
-                {activeTab === 'general' && (
-                  <GeneralSectionComponent />
-                )}
-                {activeTab === 'customize' && (
-                  <AvatarSectionComponent />
-                )}
-                {activeTab === 'prompt' && (
-                  <PromptSettings/>
-                )}
-                {activeTab === 'advanced' && (
-                  <AdvancedSection />
-                )}
+          {/* Main Content */}
+          <div className="flex flex-col w-5/6 p-10 overflow-y-auto overflow-x-hidden scroll-smooth overscroll-auto scrollbar-thin scrollbar-thumb-rounded-xl scrollbar-thumb-primary">
+            <form
+              onSubmit={handleFormSubmit}
+              className="flex-grow flex flex-col"
+            >
+              {activeTab === 'general' && (
+                <GeneralSectionComponent />
+              )}
+              {activeTab === 'advanced' && (
+                <AdvancedSection />
+              )}
+              {activeTab === 'customize' && (
+                <AvatarSectionComponent />
+              )}
+              {activeTab === 'prompt' && (
+                <PromptSettings />
+              )}
 
-                <div className="flex-grow" />
-                <hr className="my-10 h-px border-t-0 bg-transparent bg-gradient-to-r from-transparent via-neutral-500 to-transparent opacity-25 dark:opacity-50" />
-                <div className="flex justify-end space-x-4">
-                  <ConsolePooper />
-                  <button
-                    type="submit"
-                    className="btn btn-primary transition ease-in-out duration-300"
-                  >
-                    Save Settings
-                  </button>
-                  <button
-                    type="button"
-                    onClick={handleResetSettings}
-                    className="btn btn-secondary transition ease-in-out duration-300"
-                  >
-                    Reset to Default
-                  </button>
-                </div>
-              </form>
-            </div>
+
+              <div className="flex-grow" />
+              <hr className="my-10 h-px border-t-0 bg-transparent bg-gradient-to-r from-transparent via-neutral-500 to-transparent opacity-25 dark:opacity-50" />
+              <div className="flex justify-end space-x-4">
+                <ConsolePooper />
+                <button
+                  type="submit"
+                  className="btn btn-primary transition ease-in-out duration-300"
+                >
+                  Save Settings
+                </button>
+                <button
+                  type="button"
+                  onClick={handleResetSettings}
+                  className="btn btn-secondary transition ease-in-out duration-300"
+                >
+                  Reset to Default
+                </button>
+              </div>
+            </form>
           </div>
         </div>
-        {showConfirmation && (
-          <ConfirmationDialog
-            message="Are you sure you want to reset the settings?"
-            onConfirm={handleConfirmReset}
-            onCancel={handleCancelReset}
-          />
-        )}
+      </div>
+      {showConfirmation && (
+        <ConfirmationDialog
+          message="Are you sure you want to reset the settings?"
+          onConfirm={handleConfirmReset}
+          onCancel={handleCancelReset}
+        />
+      )}
     </motion.div>
   );
 }

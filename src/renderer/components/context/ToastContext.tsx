@@ -5,7 +5,7 @@ import React, {
   useMemo,
   useCallback,
 } from 'react';
-import Toast from '../Toast';
+import Toast from './Toast';
 
 interface ToastContextType {
   addToast: (message: string, type: string) => void;

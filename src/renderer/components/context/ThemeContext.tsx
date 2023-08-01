@@ -143,10 +143,7 @@ export const ThemeProvider = React.memo(
     }, []);
 
     useEffect(() => {
-      window.electron.ipcRenderer.store.set(
-        'lightMode',
-        preferredLightThemeName
-      );
+      window.electron.ipcRenderer.store.set( 'lightMode', preferredLightThemeName );
     }, [preferredLightThemeName]);
 
     useEffect(() => {
@@ -165,23 +162,8 @@ export const ThemeProvider = React.memo(
     }, [themeName]);
 
     const contextValue = useMemo(
-      () => ({
-        theme,
-        themeName,
-        preferredLightThemeName,
-        preferredDarkThemeName,
-        setTheme,
-        setPreferredLightThemeName,
-        setPreferredDarkThemeName,
-        toggleTheme,
-      }),
-      [
-        theme,
-        themeName,
-        preferredLightThemeName,
-        preferredDarkThemeName,
-        toggleTheme,
-      ]
+      () => ({ theme, themeName, preferredLightThemeName, preferredDarkThemeName, setTheme, setPreferredLightThemeName, setPreferredDarkThemeName, toggleTheme, }),
+      [ theme, themeName, preferredLightThemeName, preferredDarkThemeName, toggleTheme, ]
     );
 
     return (

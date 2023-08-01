@@ -39,7 +39,17 @@ function Sidebar() {
 	};
 
 	const isActive = (path: string) => location.pathname === path;
-	const buttonStyle = isExpanded ? 'btn btn-ghost justify-start' : 'btn btn-circle btn-ghost';
+	const buttonStyle = isExpanded ? 'btn btn-ghost justify-start' : 'flex-shrink-0 cursor-pointer select-none flex flex-wrap items-center justify-center text-center h-[3rem] px-[1rem] gap-[0.5rem] rounded-full';
+
+	const buttonHover = {
+		scale: 1.4,
+		transition: { duration: 0.2 },
+	};
+
+	const buttonTap = {
+		scale: 0.75,
+		transition: { duration: 0.2 },
+	};
 
 	const textVariants = {
 		open: { opacity: 1, x: 0, display: 'inline', transition: { duration: 0.3 } },
@@ -64,11 +74,13 @@ function Sidebar() {
 				</div>
 				<div className='flex flex-col space-y-2 mt-12 w-full'>
 					{buttons.map((button) => (
-						<button
+						<motion.button
 							key={button.path}
 							type='button'
 							className={`${buttonStyle} ${isActive(button.path) ? 'drop-shadow-md shadow-lg' : ''}`}
 							onClick={() => handleButtonClick(button.path)}
+							whileHover={buttonHover}
+							whileTap={buttonTap}
 						>
 							<span className='flex items-center justify-start'>
 								<span className='flex items-center'>
@@ -88,7 +100,7 @@ function Sidebar() {
 									</AnimatePresence>
 								</span>
 							</span>
-						</button>
+						</motion.button>
 					))}
 				</div>
 				<DarkModeToggle />

@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState, useRef } from 'react';
 import { HiOutlineTrash, HiInboxArrowDown } from 'react-icons/hi2';
 import ImageDisplay from './ImageDisplay';
 import Loading from '@context/Loading';
@@ -19,6 +19,8 @@ function ImgMessageBox({ imageUrls, loading }: ImgMessageBoxProps) {
 	const [, setRefreshKey] = useState(0);
 	const [showModal, setShowModal] = useState(false);
 	const { addToast } = useContext(ToastContext);
+	const imageContainerRef = useRef<HTMLDivElement | null>(null); // Add this line
+
 
 	useEffect(() => {
 		imageUrls.forEach((imageData) => {
@@ -53,6 +55,13 @@ function ImgMessageBox({ imageUrls, loading }: ImgMessageBoxProps) {
 		setShowModal(false);
 		addToast('All Images Deleted', 'warning');
 	};
+
+	useEffect(() => {
+		if (imageContainerRef.current) {
+			imageContainerRef.current.scrollTop = imageContainerRef.current.scrollHeight;
+		}
+	}, [storedImages]);
+
 
 	const renderModal = () => {
 		return (
@@ -117,7 +126,9 @@ function ImgMessageBox({ imageUrls, loading }: ImgMessageBoxProps) {
 						)}
 					</div>
 					<div className="w-full h-full rounded-3xl overflow-hidden">
-						<div className='w-full h-full bg-base-300 p-10 overflow-y-auto overflow-x-hidden scrollbar-thin scrollbar-thumb-rounded-xl scrollbar-thumb-secondary'>
+						<div
+							className='w-full h-full bg-base-300 p-10 overflow-y-auto overflow-x-hidden scrollbar-thin scrollbar-thumb-rounded-xl scrollbar-thumb-secondary'
+							ref={imageContainerRef}>
 							<div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4'>
 								{Object.entries(storedImages).map(([id, imageData]) => (
 									<ImageDisplay

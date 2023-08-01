@@ -3,8 +3,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import MessageBox from './MessageBox';
 import ChatInput from './ChatInput';
 import ChatList from './ChatList';
-import { useConversations } from '../context/ConversationContext';
-import { useSettings } from '../context/SettingsContext';
+import { useConversations } from '@context/ConversationContext';
+import { useSettings } from '@context/SettingsContext';
 
 const MainContent: React.FC = function MainContentComponent() {
   useConversations();
